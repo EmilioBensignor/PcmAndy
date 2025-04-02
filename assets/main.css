@@ -1,0 +1,26 @@
+/* :root {
+    --black-color: #03101D;
+    --white-color: #F5F7F8;
+    --gray-color: #A4A7A9;
+    --mid-gray-color: #DDDDDD;
+    --light-gray-color: #E8E9E9;
+    --primary-color: #C0D6DF;
+    --secondary-color: #7ECEE2;
+    --terciary-color: #0A9EC2;
+    --color-red: #DE5E5E;
+} */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style: none;
+    /* font-family: "Outfit", sans-serif; */
+}
+
+body {
+    /* background-color: var(--white-color); */
+    /* color: var(--black-color); */
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
