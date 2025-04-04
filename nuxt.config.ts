@@ -2,14 +2,21 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
-  css: ['~/assets/main.css'],
+  css: ['~/assets/css/main.css'],
   modules: [
     '@nuxt/image',
     '@nuxt/icon',
     '@pinia/nuxt',
     '@nuxt/fonts',
-    '@nuxtjs/supabase'
+    '@nuxtjs/supabase',
+    '@primevue/nuxt-module',
+    '@nuxtjs/tailwindcss',
   ],
+  primevue: {
+    components: {
+      include: []
+    },
+  },
   supabase: {
     redirectOptions: {
       login: '/login',

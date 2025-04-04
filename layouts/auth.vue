@@ -1,5 +1,9 @@
 <template>
     <AuthHeader />
-    <slot />
+    <DefaultMain>
+        <DefaultSection>
+            <slot />
+        </DefaultSection>
+    </DefaultMain>
     <DefaultFooter />
 </template>
