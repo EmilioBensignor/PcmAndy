@@ -15,7 +15,7 @@
             </template>
             <nav class="flex flex-col">
                 <NuxtLink :to="link.route" v-for="(link, index) in menu" :key="index" class="flex items-center gap-3 text-black text-sm p-3">
-                    <Icon :name="`tabler:cards`" />
+                    <Icon :name="`tabler:${link.icon}`" />
                     {{ link.label }}
                 </NuxtLink>
             </nav>
@@ -42,10 +42,12 @@ const menu = [
     {
         label: "Obras",
         route: ROUTE_NAMES.HOME,
+        icon: "brush"
     },
     {
         label: "Inspiraciones",
         route: ROUTE_NAMES.HOME,
+        icon: "camera-heart"
     },
 ];
 
