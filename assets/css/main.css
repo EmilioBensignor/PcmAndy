@@ -1,3 +1,11 @@
+:root {
+    --primary-color: #F1B9B9;
+    --secondary-color: #D90429;
+    --black-color: #2B2D42;
+    --gray-color: #A4A7A9;
+    --white-color: #EDF2F4;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -20,10 +28,10 @@ form .p-password {
     width: 100%;
     position: relative;
     background: transparent;
-    border: 1px solid #2B2D42;
+    border: 1px solid var(--black-color);
     border-radius: 0.625rem;
     font-size: 1rem;
-    color: #2B2D42;
+    color: var(--black-color);
     padding: 0.5rem 0.75rem;
 }
 
@@ -43,7 +51,7 @@ form .p-password input::placeholder,
 /* form .p-textarea, */
 form .p-select .p-placeholder {
     font-size: 1rem;
-    color: #A4A7A9;
+    color: var(--gray-color);
 }
 
 form .p-password-toggle-mask-icon {
@@ -76,8 +84,8 @@ form .p-fileupload-basic .p-message-text {
 } */
 
 /* .p-select-overlay {
-    background: #EDF2F4 !important;
-    border: 2px solid #F1B9B9 !important;
+    background: var(--white-color) !important;
+    border: 2px solid var(--primary-color) !important;
     border-radius: 5px !important;
     padding: 0.375rem;
     margin-top: 0.25rem;
@@ -90,14 +98,14 @@ form .p-fileupload-basic .p-message-text {
 }
 
 .p-select-overlay .p-select-header .p-iconfield {
-    border: 2px solid #F1B9B9;
+    border: 2px solid var(--primary-color);
     border-radius: 5px;
     padding: 0.5rem 0.75rem;
 }
 
 .p-select-overlay .p-select-header .p-inputicon {
     right: 0.75rem !important;
-    color: #D90429;
+    color: var(--secondary-color);
     transform: translateY(-50%);
 }
 
@@ -106,7 +114,7 @@ form .p-fileupload-basic .p-message-text {
 }
 
 .p-select-overlay .p-select-option:hover .p-select-option-label {
-    color: #D90429;
+    color: var(--secondary-color);
 } */
 
 /* Buttons */
@@ -114,7 +122,7 @@ form .p-fileupload-basic .p-message-text {
 .p-button {
     width: 100%;
     max-width: 480px;
-    background-color: #F1B9B9 !important;
+    background: var(--primary-color) !important;
     border: none !important;
     border-radius: 0.625rem !important;
     box-shadow: 0px 4px 4px 0px #00000040;
@@ -124,7 +132,7 @@ form .p-fileupload-basic .p-message-text {
     font-weight: 400 !important;
     text-align: center;
     text-decoration: none !important;
-    color: #2B2D42 !important;
+    color: var(--black-color) !important;
     padding: 0.75rem 3.125rem !important;
     transition: all 0.3s !important;
     cursor: pointer !important;
@@ -132,7 +140,7 @@ form .p-fileupload-basic .p-message-text {
 
 .p-button:hover,
 .active {
-    background: #D90429 !important;
+    background: var(--secondary-color) !important;
     color: #fff !important;
 }
 
@@ -149,6 +157,37 @@ form .p-fileupload-basic .p-message-text {
     margin: 0 auto;
 }
 
+/* Drawer */
+
+.p-overlay-mask {
+    background: rgba(0, 0, 0, 0.3) !important;
+}
+
+.p-drawer {
+    width: 65% !important;
+    max-width: 20rem;
+    gap: 1.5rem;
+    background: var(--primary-color) !important;
+    box-shadow: 8px 0px 12px 0px #00000040 !important;
+    transition: all 0.3s !important;
+    padding: 1.5rem 0.75rem !important;
+}
+
+.p-drawer-header {
+    padding: 0 0.75rem !important;
+}
+
+.p-drawer-header .p-button-text.p-button-secondary,
+.p-drawer-header .p-icon {
+    display: none;
+}
+
+.p-drawer-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
 /* Toast */
 
 /* .p-toast {
@@ -160,9 +199,9 @@ form .p-fileupload-basic .p-message-text {
 }
 
 .p-toast-message {
-    background: #EDF2F4 !important;
+    background: var(--white-color) !important;
     border: none !important;
-    border-top: 5px solid #D90429 !important;
+    border-top: 5px solid var(--secondary-color) !important;
     border-bottom-left-radius: 12px !important;
     box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25) !important;
     margin: 0 !important;
