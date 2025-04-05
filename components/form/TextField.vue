@@ -4,7 +4,7 @@
         <InputText :id="id" type="text" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)"
             :autocomplete="autocomplete" :placeholder="placeholder" />
         <DefaultError v-if="error">
-            <p>{{ error }}</p>
+            {{ error }}
         </DefaultError>
     </div>
 </template>

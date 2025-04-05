@@ -7,7 +7,7 @@
                 placeholder: placeholder
             }" />
         <DefaultError v-if="error">
-            <p>{{ error }}</p>
+            {{ error }}
         </DefaultError>
     </div>
 </template>

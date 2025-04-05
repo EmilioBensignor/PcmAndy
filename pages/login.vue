@@ -15,11 +15,11 @@
                 registrate</NuxtLink>
         </p>
         <DefaultError v-if="errorMsg">
-            <p>{{ errorMsg }}</p>
+            {{ errorMsg }}
         </DefaultError>
 
-        <ButtonPrimary :disabled="loading || !isValid" :loading="loading" class="w-full" icon="pi pi-sign-in"
-            @click="handleSignIn" :label="loading ? '' : 'Ingresar'" type="submit" />
+        <Button :loading="loading" :class="{ active: isValid }" class="loadingButton"
+        :label="loading ? '' : 'Ingresar'" type="submit" />
     </FormLayout>
 </template>
 
