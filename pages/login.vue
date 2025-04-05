@@ -1,10 +1,25 @@
 <template>
     <DefaultTitleH1>Iniciar sesión</DefaultTitleH1>
-    <FormLayout>
+    <FormLayout @submit.prevent="handleSignIn">
         <FormFieldsContainer>
-            <FormTextField id="email" label="Correo electrónico" placeholder="stevejobs@gmail.com" autocomplete="email"
+            <FormEmailField id="email" label="Correo electrónico" placeholder="stevejobs@gmail.com" autocomplete="email"
                 v-model="form.email" :error="errors.email" @input="validateEmail" />
+            <FormPasswordField id="password" label="Contraseña" placeholder="********" autocomplete="current-password"
+                v-model="form.password" :error="errors.password" @input="validatePassword" type="password" />
         </FormFieldsContainer>
+        <NuxtLink :to="ROUTE_NAMES.FORGOT_PASSWORD" class="text-sm text-black underline">
+            ¿Olvidaste tu contraseña?
+        </NuxtLink>
+        <p class="text-sm">Si todavía no tienes una cuenta, <NuxtLink :to="ROUTE_NAMES.REGISTER"
+                class="text-sm text-black underline">
+                registrate</NuxtLink>
+        </p>
+        <DefaultError v-if="errorMsg">
+            <p>{{ errorMsg }}</p>
+        </DefaultError>
+
+        <ButtonPrimary :disabled="loading || !isValid" :loading="loading" class="w-full" icon="pi pi-sign-in"
+            @click="handleSignIn" :label="loading ? '' : 'Ingresar'" type="submit" />
     </FormLayout>
 </template>
 

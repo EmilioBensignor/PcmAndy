@@ -1,6 +1,7 @@
 <template>
     <AuthHeader />
     <DefaultMain>
+        <Toast />
         <DefaultSection>
             <slot />
         </DefaultSection>

@@ -1,8 +1,11 @@
 <template>
     <div class="w-full flex flex-col gap-2">
         <FormLabel :for="id">{{ label }}</FormLabel>
-        <InputText :id="id" type="text" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)"
-            :autocomplete="autocomplete" :placeholder="placeholder" />
+        <Password :inputId="id" :modelValue="modelValue" @update:modelValue="$emit('update:modelValue', $event)"
+            toggleMask :feedback="false" :inputProps="{
+                autocomplete: 'current-password',
+                placeholder: placeholder
+            }" />
         <DefaultError v-if="error">
             <p>{{ error }}</p>
         </DefaultError>
@@ -22,15 +25,11 @@ export default {
         },
         error: {
             type: String,
-            default: null
+            required: false
         },
         modelValue: {
             type: String,
             default: ''
-        },
-        autocomplete: {
-            type: String,
-            default: 'off'
         },
         placeholder: {
             type: String,
@@ -39,8 +38,8 @@ export default {
     },
     emits: ['update:modelValue', 'input'],
     methods: {
-        validateInput(event) {
-            this.$emit('input', event.target.value);
+        validateInput(value) {
+            this.$emit('input', value);
         }
     }
 }

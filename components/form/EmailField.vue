@@ -1,7 +1,7 @@
 <template>
     <div class="w-full flex flex-col gap-2">
-        <label :for="id">{{ label }}</label>
-        <InputText :id="id" type="email" :value="modelValue"
+        <FormLabel :for="id">{{ label }}</FormLabel>
+        <InputText :id="id" type="email" :value="modelValue" class="w-full bg-transparent  border text-black rounded-[0.625rem] py-2 px-3"
             @input="$emit('update:modelValue', $event.target.value)" :placeholder="placeholder" :autocomplete="id" />
         <DefaultError v-if="error">
             <p>{{ error }}</p>

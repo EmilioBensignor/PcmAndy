@@ -14,8 +14,12 @@ export default defineNuxtConfig({
   ],
   primevue: {
     components: {
-      include: []
+      include: ['Toast', 'Button', 'Dialog', 'InputText', 'Password', 'ProgressSpinner', 'Drawer']
     },
+    options: {
+      ripple: false,
+      unstyled: false
+    }
   },
   supabase: {
     redirectOptions: {
