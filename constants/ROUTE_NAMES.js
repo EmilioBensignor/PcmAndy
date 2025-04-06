@@ -9,5 +9,9 @@ export const ROUTE_NAMES = {
     // Auth
     HOME: '/',
     WORKS: '/obras',
+    WORKS_CREATE: '/obras/nueva',
+    WORKS_EDIT: '/obras/editar',
     INSPIRATION: '/inspiracion',
+    INSPIRATION_CREATE: '/inspiracion/nueva',
+    INSPIRATION_EDIT: '/inspiracion/editar',
 };
