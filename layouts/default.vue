@@ -1,5 +1,10 @@
 <template>
     <DefaultHeader />
-    <slot />
+    <DefaultMain>
+        <Toast />
+        <DefaultSection>
+            <slot />
+        </DefaultSection>
+    </DefaultMain>
     <DefaultFooter />
 </template>

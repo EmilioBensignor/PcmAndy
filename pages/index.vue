@@ -1,3 +1,3 @@
 <template>
-    <h1>Index PCM</h1>
+    <DefaultTitleH1>Index</DefaultTitleH1>
 </template>
