@@ -41,12 +41,12 @@ const loggingOut = ref(false);
 const menu = [
     {
         label: "Obras",
-        route: ROUTE_NAMES.HOME,
+        route: ROUTE_NAMES.WORKS,
         icon: "brush"
     },
     {
         label: "Inspiraciones",
-        route: ROUTE_NAMES.HOME,
+        route: ROUTE_NAMES.INSPIRATION,
         icon: "camera-heart"
     },
 ];
