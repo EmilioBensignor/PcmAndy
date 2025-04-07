@@ -22,7 +22,6 @@
 
 <script setup>
 import { ROUTE_NAMES } from '~/constants/ROUTE_NAMES';
-import { ref, computed } from 'vue';
 
 const searchTerm = ref('');
 
@@ -40,6 +39,8 @@ const obras = [{
     description: 'Descripción de la obra 3',
 }];
 
+
+// REVISAR
 const filteredObras = computed(() => {
     if (!searchTerm.value) return obras;
 
