@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #F1B9B9;
-    --secondary-color: #D90429;
+    --primary-color: #F49CBB;
+    --secondary-color: #DD2D4A;
     --black-color: #2B2D42;
     --gray-color: #A4A7A9;
     --white-color: #EDF2F4;
@@ -179,6 +179,10 @@ form .p-fileupload-basic .p-message-text {
     left: 0;
     right: 0;
     margin: 0 auto;
+}
+
+.shadow-1 {
+    box-shadow: 0px 4px 4px 0px #00000040;
 }
 
 /* Drawer */
