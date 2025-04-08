@@ -10,7 +10,7 @@
         <DefaultError v-if="errorMsg">
             {{ errorMsg }}
         </DefaultError>
-        <Button :loading="loading" :class="{ active: isValid }" class="loadingButton"
+        <Button :loading="loading" :class="{ active: isValid }" class="primaryButton loadingButton"
         :label="loading ? '' : 'Actualizar contraseña'" type="submit" />
     </FormLayout>
 </template>

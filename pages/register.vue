@@ -19,7 +19,7 @@
         <DefaultError v-if="errorMsg">
             {{ errorMsg }}
         </DefaultError>
-        <Button :loading="loading" :class="{ active: isValid }" class="loadingButton"
+        <Button :loading="loading" :class="{ active: isValid }" class="primaryButton loadingButton"
         :label="loading ? '' : 'Registrarse'" type="submit" />
     </FormLayout>
 </template>

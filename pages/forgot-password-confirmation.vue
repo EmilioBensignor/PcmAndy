@@ -12,7 +12,7 @@
             </NuxtLink>
         </div>
     </div>
-    <NuxtLink :to="routes.LOGIN" class="p-button active">
+    <NuxtLink :to="routes.LOGIN" class="primaryButton active">
         Volver a Iniciar Sesión
     </NuxtLink>
 </template>

@@ -21,6 +21,11 @@ export default defineNuxtConfig({
       unstyled: false
     }
   },
+  fonts: {
+    defaults: {
+      weights: [300, 400, 500, 700, 900],
+    }
+  },
   supabase: {
     redirectOptions: {
       login: '/login',

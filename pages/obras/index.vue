@@ -5,17 +5,16 @@
             class="bg-secondary rounded-[0.625rem] shadow-md text-white py-3 px-12">
             Agregar nueva
         </NuxtLink>
-        // REVISAR
         <div class="relative">
             <input v-model="searchTerm" type="text" placeholder="Busca una obra"
-                class="w-full pl-10 pr-4 py-3 border rounded-[0.625rem] shadow-md focus:outline-none focus:ring-2 focus:ring-secondary" />
+                class="w-full bg-white border rounded-[0.625rem] shadow-md focus:outline-none pl-10 pr-3 py-3" />
             <Icon name="tabler:search" class="absolute left-3 top-1/2 transform -translate-y-1/2" />
         </div>
     </div>
     <div v-if="filteredObras.length === 0" class="text-center mt-4">
         <p>No hay obras disponibles.</p>
     </div>
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+    <div v-else class="grid grid-cols-1 justify-items-center md:grid-cols-2 xl:grid-cols-3 gap-8 mt-2">
         <ObraCard v-for="obra in filteredObras" :key="obra.id" :obra="obra" />
     </div>
 </template>
@@ -25,19 +24,41 @@ import { ROUTE_NAMES } from '~/constants/ROUTE_NAMES';
 
 const searchTerm = ref('');
 
-const obras = [{
-    id: 1,
-    title: 'Obra 1',
-    description: 'Descripción de la obra 1',
-}, {
-    id: 2,
-    title: 'Obra 2',
-    description: 'Descripción de la obra 2',
-}, {
-    id: 3,
-    title: 'Obra 3',
-    description: 'Descripción de la obra 3',
-}];
+const obras = [
+    {
+        id: 1,
+        titulo: 'Obra 1',
+        img: 'Obra',
+        descripcion: 'Descripción de la obra 1',
+        anio: '2020',
+        ancho: '23',
+        alto: '12',
+        categoria: 1,
+        destacado: true,
+    },
+    {
+        id: 2,
+        titulo: 'Obra 2',
+        img: 'Obra',
+        descripcion: 'Descripción de la obra 2',
+        anio: '2021',
+        ancho: '45',
+        alto: '30',
+        categoria: 1,
+        destacado: false,
+    },
+    {
+        id: 3,
+        titulo: 'Obra 3',
+        img: 'Obra',
+        descripcion: 'Descripción de la obra 3',
+        anio: '2022',
+        ancho: '100',
+        alto: '50',
+        categoria: 2,
+        destacado: true,
+    },
+];
 
 
 // REVISAR
@@ -46,8 +67,8 @@ const filteredObras = computed(() => {
 
     const term = searchTerm.value.toLowerCase();
     return obras.filter(obra =>
-        obra.title.toLowerCase().includes(term) ||
-        obra.description.toLowerCase().includes(term)
+        obra.titulo.toLowerCase().includes(term) ||
+        obra.descripcion.toLowerCase().includes(term)
     );
 });
 </script>
