@@ -6,24 +6,26 @@
         <div class="flex flex-col gap-3 p-5">
             <p class="text-white font-light">{{ obra.titulo }}</p>
             <div class="flex gap-3">
-                <img :src="`/images/${obra.img}.png`" :alt="obra.titulo" class="w-[50%] object-cover">
+                <img :src="obra.imagen_url || '/images/placeholder.png'" :alt="obra.titulo"
+                    class="w-[50%] object-cover">
                 <div class="flex flex-col gap-3">
-                    <p class="text-white font-light">Año: {{ obra.descripcion }}</p>
-                    <p class="text-white font-light">Tamaño: {{ obra.ancho }} x {{ obra.alto }} cm</p>
+                    <p class="text-white font-light">Año: {{ obra.anio }}</p>
+                    <p class="text-white font-light">Tamaño: {{ obra.dimensiones?.ancho }} x {{ obra.dimensiones?.alto
+                        }} cm</p>
                     <p class="text-white font-light">{{ obra.categoria }}</p>
                 </div>
             </div>
         </div>
         <div class="flex items-center border-t border-gray">
             <div class="w-[50%] flex justify-center items-center border-r border-gray p-3">
-                <NuxtLink :to="`${ROUTE_NAMES.WORKS_EDIT}/${obra.id}`">
+                <NuxtLink :to="{ name: ROUTE_NAMES.OBRAS_EDIT, params: { id: obra.id } }">
                     <Icon name="tabler:edit" size="1.5rem" class="text-primary" />
                 </NuxtLink>
             </div>
             <div class="w-[50%] flex justify-center items-center p-3">
-                <Button>
+                <button @click="$emit('delete', obra)">
                     <Icon name="tabler:trash" size="1.5rem" class="text-primary" />
-                </Button>
+                </button>
             </div>
         </div>
     </div>
@@ -38,4 +40,6 @@ const props = defineProps({
         required: true
     }
 });
+
+defineEmits(['delete']);
 </script>
