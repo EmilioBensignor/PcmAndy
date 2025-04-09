@@ -11,6 +11,5 @@ import { ROUTE_NAMES } from '~/constants/ROUTE_NAMES';
 
 definePageMeta({
     layout: "default",
-    middleware: "auth"
 });
 </script>

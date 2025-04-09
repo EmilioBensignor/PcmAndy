@@ -91,19 +91,4 @@ export default defineNuxtConfig({
     viewTransition: true,
     componentIslands: true
   },
-
-  // Optimizaciones de caché
-  routeRules: {
-    '/assets/**': {
-      headers: {
-        'Cache-Control': 'public, max-age=31536000, immutable'
-      }
-    },
-    '/': {
-      prerender: true,
-      cache: {
-        maxAge: 60 * 60
-      }
-    }
-  }
 })

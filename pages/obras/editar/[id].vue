@@ -20,9 +20,8 @@ import { useObrasStore } from '~/store/obras';
 import { ROUTE_NAMES } from '~/constants/ROUTE_NAMES';
 
 definePageMeta({
-    middleware: 'auth'
+    layout: "default",
 });
-
 const obrasStore = useObrasStore();
 const { $toast } = useNuxtApp();
 const router = useRouter();
