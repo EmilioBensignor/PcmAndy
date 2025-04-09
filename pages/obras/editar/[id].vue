@@ -19,9 +19,6 @@
 import { useObrasStore } from '~/store/obras';
 import { ROUTE_NAMES } from '~/constants/ROUTE_NAMES';
 
-definePageMeta({
-    layout: "default",
-});
 const obrasStore = useObrasStore();
 const { $toast } = useNuxtApp();
 const router = useRouter();
