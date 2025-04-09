@@ -4,6 +4,7 @@ export const useObraValidation = (formData, errors, isEditing = false) => {
             errors[key] = '';
         });
     };
+
     const validateTitulo = () => {
         if (!formData.titulo) {
             errors.titulo = 'El título es obligatorio';
@@ -19,6 +20,7 @@ export const useObraValidation = (formData, errors, isEditing = false) => {
         errors.titulo = '';
         return true;
     };
+
     const validateImagenes = () => {
         // Si estamos editando y hay imágenes existentes, no es obligatorio subir nuevas
         if (isEditing && formData.existingImages && formData.existingImages.length > 0) {

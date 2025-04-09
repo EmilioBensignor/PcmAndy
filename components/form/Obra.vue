@@ -3,9 +3,11 @@
         <FormFieldsContainer>
             <FormTextField id="titulo" label="Título*" placeholder="Escribe el título de la obra" v-model="form.titulo"
                 :error="errors.titulo" @input="validateTitulo" />
+
             <FormMultiImageField id="imagenes" :label="isEditing ? 'Imágenes' : 'Imágenes*'" v-model="form.imagenes"
                 :error="errors.imagenes" :existing-images="existingImages" @update:destacada="updateImagenDestacada"
-                @update:order="updateImagenOrder" />
+                @update:order="updateImagenOrder" accept="image/*" placeholder="Adjunte una imágen"
+                :maxFileSize="5000000" :required="!isEditing" />
         </FormFieldsContainer>
 
         <FormFieldsContainer>
@@ -14,8 +16,8 @@
             <FormTextField id="anio" label="Año*" placeholder="2025" v-model="form.anio" :error="errors.anio"
                 @input="validateAnio" />
             <div class="flex items-center gap-2">
-                <FormTextField id="ancho" label="Ancho*" placeholder="120" v-model="form.ancho"
-                    :error="errors.ancho" @input="validateAncho" class="w-24" />
+                <FormTextField id="ancho" label="Ancho*" placeholder="120" v-model="form.ancho" :error="errors.ancho"
+                    @input="validateAncho" class="w-24" />
                 <span class="text-lg self-end -translate-y-2">X</span>
                 <FormTextField id="alto" label="Alto*" placeholder="88" v-model="form.alto" :error="errors.alto"
                     @input="validateAlto" class="w-24" />
@@ -24,24 +26,30 @@
         </FormFieldsContainer>
 
         <FormFieldsContainer>
-            <FormTextField id="categoria" label="Categoría*" placeholder="Elige una categoría" v-model="form.categoria"
-                :error="errors.categoria" @input="validateCategoria" />
-            <FormSwitch id="destacado" label="Destacado" v-model="form.destacado" dataOn="Sí" dataOff="No" />
+            <div class="w-full flex flex-col gap-2">
+                <p class="font-light">Categoría*</p>
+                <Select id="categoria" v-model="form.categoria" :options="categorias" optionLabel="nombre"
+                    optionValue="id" placeholder="Seleccione una categoría" class="w-full"
+                    @change="validateCategoria" />
+                <div v-if="errors.categoria" class="text-red-500 text-sm mt-1">
+                    {{ errors.categoria }}
+                </div>
+            </div>
+            <FormSwitch id="destacado" label="Destacado" v-model="form.destacado" data-on="Activado" data-off="Desactivado" />
         </FormFieldsContainer>
 
         <div class="w-full flex flex-wrap justify-center gap-4">
-            <NuxtLink :to="{ name: ROUTE_NAMES.OBRAS }" class="primaryButton">
+            <ButtonPrimary :to="`${ROUTE_NAMES.WORKS}`">
                 Cancelar
-            </NuxtLink>
-            <button type="submit" class="primaryButton active" :disabled="isLoading">
+            </ButtonPrimary>
+            <ButtonSecondary type="submit" :disabled="isLoading">
                 <span v-if="isLoading">
-                    <i class="pi pi-spinner pi-spin mr-2"></i>
                     {{ isEditing ? 'Actualizando...' : 'Guardando...' }}
                 </span>
                 <span v-else>
                     {{ isEditing ? 'Actualizar' : 'Crear' }}
                 </span>
-            </button>
+            </ButtonSecondary>
         </div>
     </FormLayout>
 </template>
@@ -49,6 +57,7 @@
 <script setup>
 import { ROUTE_NAMES } from '~/constants/ROUTE_NAMES';
 import { useObraValidation } from '~/composables/useObraValidation';
+import { useCategoriasStore } from '~/store/categorias';
 
 const props = defineProps({
     initialData: {
@@ -66,19 +75,38 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['submit']);
-
 const existingImages = ref([]);
+const categoriasStore = useCategoriasStore();
+
+// Seguimos el índice de la imagen destacada internamente
+const imagenDestacadaIndex = ref(0);
+
+// Cargar las categorías al montar el componente
+onMounted(async () => {
+    if (categoriasStore.categorias.length === 0) {
+        await categoriasStore.fetchCategorias();
+    }
+
+    // Cargamos las imágenes existentes si estamos en modo edición
+    if (props.isEditing && props.initialData.imagenes) {
+        existingImages.value = Array.isArray(props.initialData.imagenes)
+            ? props.initialData.imagenes
+            : [props.initialData.imagen_url].filter(Boolean);
+    }
+});
+
+// Crear un computed para acceder a las categorías
+const categorias = computed(() => categoriasStore.getCategorias);
 
 const form = reactive({
     titulo: props.initialData?.titulo || '',
     descripcion: props.initialData?.descripcion || '',
-    anio: props.initialData?.anio ? props.initialData.anio.toString() : new Date().getFullYear().toString(),
-    ancho: props.initialData?.dimensiones?.ancho ? props.initialData.dimensiones.ancho.toString() : '',
-    alto: props.initialData?.dimensiones?.alto ? props.initialData.dimensiones.alto.toString() : '',
-    categoria: props.initialData?.categoria || '',
+    anio: props.initialData?.anio ? props.initialData.anio.toString() : '',
+    ancho: props.initialData?.ancho ? props.initialData.ancho.toString() : '',
+    alto: props.initialData?.alto ? props.initialData.alto.toString() : '',
+    categoria: props.initialData?.categoria_id || null,
     destacado: props.initialData?.destacado || false,
-    imagenes: [],
-    imagen_destacada_index: props.initialData?.imagen_destacada_index || 0
+    imagenes: []
 });
 
 const errors = reactive({
@@ -91,24 +119,13 @@ const errors = reactive({
     imagenes: ''
 });
 
-// Cargamos las imágenes existentes si estamos en modo edición
-onMounted(() => {
-    if (props.isEditing && props.initialData.imagenes) {
-        existingImages.value = Array.isArray(props.initialData.imagenes)
-            ? props.initialData.imagenes
-            : [props.initialData.imagen_url].filter(Boolean);
-    }
-});
-
 // Métodos para actualizar el índice de la imagen destacada y el orden
 const updateImagenDestacada = (index) => {
-    form.imagen_destacada_index = index;
+    imagenDestacadaIndex.value = index;
 };
 
 const updateImagenOrder = (newOrder) => {
-    // Este método se llamará desde el componente MultiImageField
-    // cuando se reordenen las imágenes
-    console.log('Nuevo orden de imágenes:', newOrder);
+    existingImages.value = newOrder;
 };
 
 const {
@@ -134,14 +151,13 @@ const handleSubmit = () => {
         titulo: form.titulo,
         descripcion: form.descripcion,
         anio: parseInt(form.anio),
-        dimensiones: {
-            ancho: parseFloat(form.ancho),
-            alto: parseFloat(form.alto)
-        },
-        categoria: form.categoria,
+        ancho: parseFloat(form.ancho),
+        alto: parseFloat(form.alto),
+        categoria_id: form.categoria,
+        categoria: form.categoria ? categorias.value.find(c => c.id === form.categoria)?.nombre : null,
         destacado: form.destacado,
         imagenes: form.imagenes,
-        imagen_destacada_index: form.imagen_destacada_index,
+        imagen_destacada_index: imagenDestacadaIndex.value,
         existingImages: existingImages.value
     };
 

@@ -1,71 +1,53 @@
 <template>
     <div class="w-full flex flex-col gap-2">
-        <FormLabel :for="id">{{ label }}</FormLabel>
+        <p class="font-light">{{ label }}</p>
 
-        <FileUpload :id="id" mode="advanced" :multiple="true" accept="image/*" :maxFileSize="5000000"
-            :showCancelButton="true" :chooseLabel="'Adjunte una imágen'" :uploadLabel="'Subir todas'"
-            :cancelLabel="'Cancelar'" @select="onSelect" @remove="onRemove" class="w-full" />
+        <!-- Imágenes existentes -->
+        <div v-if="existingImages && existingImages.length > 0"
+            class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+            <div v-for="(img, index) in existingImages" :key="`existing-${index}`"
+                class="relative border rounded-md p-2">
+                <img :src="img" alt="Imagen existente" class="w-full h-40 object-contain" />
+                <div class="flex justify-between mt-2">
+                    <button type="button" 
+                        :class="`text-sm ${index === imagenPrincipalIndex ? 'bg-secondary' : 'bg-terciary'} text-white py-1 px-2 rounded`"
+                        @click="setPrincipal(index)">
+                        {{ index === imagenPrincipalIndex ? 'Principal' : 'Hacer principal' }}
+                    </button>
+                    <button type="button" class="text-sm bg-gray text-white py-1 px-2 rounded"
+                        @click="removeExistingImage(index)">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subida de archivos -->
+        <FileUpload :id="id" mode="advanced" :accept="accept" :multiple="true" :maxFileSize="maxFileSize"
+            :chooseLabel="placeholder" :auto="true" :customUpload="true" @uploader="onUpload" @select="onSelect"
+            @remove="onRemove" />
+
+        <!-- Previsualización de imágenes nuevas -->
+        <div v-if="previewUrls.length > 0" class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+            <div v-for="(url, index) in previewUrls" :key="`preview-${index}`" class="relative border rounded-md p-2">
+                <img :src="url" alt="Vista previa" class="w-full h-40 object-contain" />
+                <div class="flex justify-between mt-2">
+                    <button type="button" 
+                        :class="`text-sm ${index === previewDestacadaIndex ? 'bg-secondary' : 'bg-terciary'} text-white py-1 px-2 rounded`"
+                        @click="setPrincipalNew(index)">
+                        {{ index === previewDestacadaIndex ? 'Principal' : 'Hacer principal' }}
+                    </button>
+                    <button type="button" class="text-sm bg-gray text-white py-1 px-2 rounded"
+                        @click="removeNewImage(index)">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <DefaultError v-if="error">
             {{ error }}
         </DefaultError>
-
-        <!-- Imágenes existentes -->
-        <div v-if="combinedImages.length > 0" class="w-full mt-4">
-            <h4 class="text-base font-semibold mb-2">Imágenes ({{ combinedImages.length }})</h4>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <div v-for="(imagen, index) in combinedImages" :key="index"
-                    class="relative border rounded-lg overflow-hidden">
-                    <div class="relative group">
-                        <img :src="getImageUrl(imagen)" :alt="`Imagen ${index + 1}`" class="w-full h-48 object-cover" />
-
-                        <div
-                            class="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-between p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <div class="flex justify-between">
-                                <button type="button" @click="setDestacada(index)"
-                                    class="w-8 h-8 rounded-full flex items-center justify-center"
-                                    :class="[isDestacada(index) ? 'bg-yellow-500' : 'bg-gray-700 bg-opacity-70 hover:bg-yellow-500']">
-                                    <i class="pi pi-star-fill"
-                                        :class="[isDestacada(index) ? 'text-white' : 'text-gray-200']"></i>
-                                </button>
-
-                                <button type="button" @click="removeImage(index)"
-                                    class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                                    <i class="pi pi-trash text-white"></i>
-                                </button>
-                            </div>
-
-                            <div class="flex justify-between">
-                                <button type="button" @click="moveImage(index, -1)" :disabled="index === 0"
-                                    class="w-8 h-8 bg-gray-700 bg-opacity-70 rounded-full flex items-center justify-center disabled:opacity-50">
-                                    <i class="pi pi-arrow-left text-white"></i>
-                                </button>
-
-                                <button type="button" @click="moveImage(index, 1)"
-                                    :disabled="index === combinedImages.length - 1"
-                                    class="w-8 h-8 bg-gray-700 bg-opacity-70 rounded-full flex items-center justify-center disabled:opacity-50">
-                                    <i class="pi pi-arrow-right text-white"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="absolute top-0 left-0 p-1">
-                        <span v-if="isDestacada(index)" class="bg-yellow-500 text-white text-xs px-2 py-1 rounded">
-                            Destacada
-                        </span>
-                        <span v-if="isNewImage(index)" class="bg-green-500 text-white text-xs px-2 py-1 rounded">
-                            Nueva
-                        </span>
-                    </div>
-
-                    <div class="absolute bottom-0 right-0 bg-black bg-opacity-60 text-white text-xs px-2 py-1">
-                        {{ index + 1 }}
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -90,138 +72,141 @@ const props = defineProps({
     existingImages: {
         type: Array,
         default: () => []
+    },
+    accept: {
+        type: String,
+        default: 'image/*'
+    },
+    maxFileSize: {
+        type: Number,
+        default: 5000000 // 5MB
+    },
+    placeholder: {
+        type: String,
+        default: 'Seleccionar imágenes'
+    },
+    required: {
+        type: Boolean,
+        default: false
     }
 });
 
 const emit = defineEmits(['update:modelValue', 'update:destacada', 'update:order']);
 
-const destacadaIndex = ref(0);
-const deletedExistingIndices = ref([]);
-const newImages = ref([...props.modelValue]);
+const previewUrls = ref([]);
+const localExistingImages = ref([...props.existingImages]);
+const previewDestacadaIndex = ref(0);
+const imagenPrincipalIndex = ref(0);
 
-// Imágenes combinadas (existentes + nuevas)
-const combinedImages = computed(() => {
-    const existingImagesFiltered = props.existingImages
-        .filter((_, i) => !deletedExistingIndices.value.includes(i))
-        .map(img => ({ type: 'existing', url: img }));
-    // Combinamos con las nuevas imágenes
-    const newImagesFormatted = newImages.value.map(img => ({ type: 'new', file: img }));
-
-    return [...existingImagesFiltered, ...newImagesFormatted];
-});
-
-watch(destacadaIndex, (newIndex) => {
-    emit('update:destacada', newIndex);
-});
-
-const isDestacada = (index) => {
-    return index === destacadaIndex.value;
-};
-
-const setDestacada = (index) => {
-    destacadaIndex.value = index;
-};
-
-const isNewImage = (index) => {
-    const existingCount = props.existingImages.length - deletedExistingIndices.value.length;
-    return index >= existingCount;
-};
-
-const getImageUrl = (imagen) => {
-    if (imagen.type === 'existing') {
-        return imagen.url;
-    } else if (imagen.type === 'new') {
-        return URL.createObjectURL(imagen.file);
-    }
-    return '';
-};
-
-// Manejar la selección de nuevas imágenes
-const onSelect = (event) => {
-    const selectedFiles = event.files;
-
-    selectedFiles.forEach(file => {
-        if (!newImages.value.some(f => f.name === file.name && f.size === file.size)) {
-            newImages.value.push(file);
-        }
-    });
-
-    emit('update:modelValue', newImages.value);
-};
-
-// Manejar la eliminación de imágenes desde el control de FileUpload
-const onRemove = (event) => {
-    const removedFile = event.file;
-
-    newImages.value = newImages.value.filter(
-        file => !(file.name === removedFile.name && file.size === removedFile.size)
-    );
-
-    emit('update:modelValue', newImages.value);
-};
-
-// Eliminar una imagen (nueva o existente)
-const removeImage = (index) => {
-    const existingCount = props.existingImages.length - deletedExistingIndices.value.length;
-
-    if (index < existingCount) {
-        const originalIndex = props.existingImages.findIndex(
-            (_, i) => !deletedExistingIndices.value.includes(i)
-        );
-
-        if (originalIndex !== -1) {
-            deletedExistingIndices.value.push(originalIndex);
-        }
+watch(() => props.modelValue, (newFiles) => {
+    if (newFiles && newFiles.length > 0) {
+        createPreviewUrls(newFiles);
     } else {
-        const newIndex = index - existingCount;
-        newImages.value.splice(newIndex, 1);
-        emit('update:modelValue', newImages.value);
+        previewUrls.value.forEach(url => {
+            URL.revokeObjectURL(url);
+        });
+        previewUrls.value = [];
     }
+}, { deep: true });
 
-    if (destacadaIndex.value === index) {
-        destacadaIndex.value = 0;
-    } else if (destacadaIndex.value > index) {
-        destacadaIndex.value--;
-    }
+watch(() => props.existingImages, (newImages) => {
+    localExistingImages.value = [...newImages];
+}, { deep: true });
 
-    emit('update:order', combinedImages.value);
+const setPrincipal = (index) => {
+    imagenPrincipalIndex.value = index;
+    previewDestacadaIndex.value = null;
+    emit('update:destacada', index);
 };
 
-// Mover una imagen en el orden
-const moveImage = (index, direction) => {
-    const newIndex = index + direction;
+// Función para definir la imagen destacada entre las nuevas
+const setPrincipalNew = (index) => {
+    previewDestacadaIndex.value = index;
+    imagenPrincipalIndex.value = null;
+    emit('update:destacada', localExistingImages.value.length + index);
+};
 
-    if (newIndex < 0 || newIndex >= combinedImages.value.length) {
-        return;
+// Función para eliminar una imagen existente
+const removeExistingImage = (index) => {
+    const updatedExisting = [...localExistingImages.value];
+    updatedExisting.splice(index, 1);
+    localExistingImages.value = updatedExisting;
+
+    // Ajustar el índice destacado si es necesario
+    if (imagenPrincipalIndex.value === index) {
+        imagenPrincipalIndex.value = updatedExisting.length > 0 ? 0 : null;
+        emit('update:destacada', imagenPrincipalIndex.value);
+    } else if (imagenPrincipalIndex.value > index) {
+        imagenPrincipalIndex.value--;
+        emit('update:destacada', imagenPrincipalIndex.value);
     }
 
-    const updatedImages = [...combinedImages.value];
+    emit('update:order', updatedExisting);
+};
 
-    [updatedImages[index], updatedImages[newIndex]] = [updatedImages[newIndex], updatedImages[index]];
+// Función para eliminar una imagen nueva
+const removeNewImage = (index) => {
+    const updatedFiles = [...props.modelValue];
 
-    if (destacadaIndex.value === index) {
-        destacadaIndex.value = newIndex;
-    } else if (destacadaIndex.value === newIndex) {
-        destacadaIndex.value = index;
+    URL.revokeObjectURL(previewUrls.value[index]);
+
+    updatedFiles.splice(index, 1);
+    previewUrls.value.splice(index, 1);
+
+    if (previewDestacadaIndex.value === index) {
+        previewDestacadaIndex.value = previewUrls.value.length > 0 ? 0 : null;
+    } else if (previewDestacadaIndex.value > index) {
+        previewDestacadaIndex.value--;
     }
 
-    const existingCount = props.existingImages.length - deletedExistingIndices.value.length;
+    emit('update:modelValue', updatedFiles);
 
-    const updatedExistingImages = [];
-    const updatedNewImages = [];
-    const updatedDeletedIndices = [];
+    if (previewDestacadaIndex.value !== null) {
+        emit('update:destacada', localExistingImages.value.length + previewDestacadaIndex.value);
+    }
+};
 
-    updatedImages.forEach(img => {
-        if (img.type === 'existing') {
-            updatedExistingImages.push(img.url);
-        } else {
-            updatedNewImages.push(img.file);
-        }
+// Función para manejar la selección de archivos
+const onSelect = (event) => {
+    const files = event.files;
+    const updatedFiles = [...props.modelValue];
+
+    files.forEach(file => {
+        updatedFiles.push(file);
     });
 
-    newImages.value = updatedNewImages;
-    emit('update:modelValue', newImages.value);
+    emit('update:modelValue', updatedFiles);
+    createPreviewUrls(updatedFiles);
 
-    emit('update:order', updatedImages);
-}
+    if (previewDestacadaIndex.value === null && imagenPrincipalIndex.value === null && previewUrls.value.length > 0) {
+        previewDestacadaIndex.value = 0;
+        emit('update:destacada', localExistingImages.value.length);
+    }
+};
+
+// Función para crear URLs de previsualización
+const createPreviewUrls = (files) => {
+    previewUrls.value.forEach(url => {
+        URL.revokeObjectURL(url);
+    });
+
+    previewUrls.value = files.map(file => URL.createObjectURL(file));
+};
+
+const onUpload = () => {
+    console.log('Upload event triggered, but using custom upload.');
+};
+
+const onRemove = (event) => {
+    const fileIndex = props.modelValue.findIndex(f => f.name === event.file.name);
+    if (fileIndex !== -1) {
+        removeNewImage(fileIndex);
+    }
+};
+
+onBeforeUnmount(() => {
+    previewUrls.value.forEach(url => {
+        URL.revokeObjectURL(url);
+    });
+});
 </script>

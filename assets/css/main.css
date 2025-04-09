@@ -4,6 +4,7 @@
     --terciary-color: #880D1E;
     --black-color: #2B2D42;
     --gray-color: #A4A7A9;
+    --mid-gray-color: "#DDDDDD";
     --white-color: #EDF2F4;
 }
 
@@ -49,7 +50,8 @@ footer {
 /* Form */
 
 form .p-inputtext,
-form .p-password {
+form .p-password,
+form .p-select {
     width: 100%;
     position: relative;
     background: transparent;
@@ -92,28 +94,11 @@ form .p-password-toggle-mask-icon {
     margin-top: 0;
 }
 
-/* form .p-fileupload-basic {
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 0.5rem;
-}
+/* Select */
 
-form .p-fileupload-basic .p-button {
-    width: max-content;
-}
-
-form .p-fileupload-basic .p-message-error {
-    width: 100%;
-    outline: none;
-}
-
-form .p-fileupload-basic .p-message-text {
-    color: #DE5E5E;
-} */
-
-/* .p-select-overlay {
+.p-select-overlay {
     background: var(--white-color) !important;
-    border: 2px solid var(--primary-color) !important;
+    border: 2px solid var(--gray-color) !important;
     border-radius: 5px !important;
     padding: 0.375rem;
     margin-top: 0.25rem;
@@ -143,7 +128,7 @@ form .p-fileupload-basic .p-message-text {
 
 .p-select-overlay .p-select-option:hover .p-select-option-label {
     color: var(--secondary-color);
-} */
+}
 
 /* Buttons */
 
@@ -172,6 +157,41 @@ form .p-fileupload-basic .p-message-text {
     color: #fff !important;
 }
 
+form .p-fileupload-header {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    border: none;
+}
+
+form .p-fileupload-header .p-button {
+    width: max-content;
+    gap: 0.625rem;
+    background: #DDD !important;
+    color: var(--black-color);
+    border-radius: 5px;
+    font-weight: 300;
+    padding: 0.875rem;
+}
+
+form .p-fileupload-header .p-button:not(.p-button:first-of-type) {
+    display: none !important;
+}
+
+form .p-fileupload-header .p-button .p-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+}
+
+form .p-fileupload-header .p-message-error {
+    width: 100%;
+    outline: none;
+}
+
+form .p-fileupload-header .p-message-text {
+    color: #DE5E5E;
+}
+
 .loadingButton {
     position: relative;
 }
@@ -184,6 +204,8 @@ form .p-fileupload-basic .p-message-text {
     right: 0;
     margin: 0 auto;
 }
+
+/* Shadows */
 
 .shadow-1 {
     box-shadow: 0px 4px 4px 0px #00000040;
@@ -222,7 +244,7 @@ form .p-fileupload-basic .p-message-text {
 
 /* Toast */
 
-/* .p-toast {
+.p-toast {
     width: 100%;
     max-width: 270px;
     top: 3rem !important;
@@ -246,7 +268,7 @@ form .p-fileupload-basic .p-message-text {
 
 .p-toast-message-content .p-icon {
     display: none !important;
-} */
+}
 
 /* Responsive */
 

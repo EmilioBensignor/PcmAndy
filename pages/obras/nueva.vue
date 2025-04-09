@@ -5,6 +5,7 @@
 
 <script setup>
 import { useObrasStore } from '~/store/obras';
+import { imageOptimization } from '~/services/imageOptimization';
 import { ROUTE_NAMES } from '~/constants/ROUTE_NAMES';
 
 const obrasStore = useObrasStore();
@@ -19,48 +20,56 @@ const handleSubmit = async (formData) => {
     try {
         $toast.info('Guardando la obra...');
 
-        const imageUrls = [];
-
-        if (formData.imagenes && formData.imagenes.length > 0) {
-            for (const imagen of formData.imagenes) {
-                try {
-                    const imageUrl = await obrasStore.uploadImage(imagen, {
-                        title: formData.titulo
-                    });
-                    if (imageUrl) {
-                        imageUrls.push(imageUrl);
-                    }
-                } catch (error) {
-                    console.error('Error al subir imagen:', error);
-                }
-            }
-        }
-
         const obraData = {
             titulo: formData.titulo,
             descripcion: formData.descripcion,
             anio: parseInt(formData.anio),
-            dimensiones: {
-                ancho: parseFloat(formData.ancho),
-                alto: parseFloat(formData.alto)
-            },
-            categoria: formData.categoria,
-            destacado: formData.destacado,
-            imagen_url: imageUrls[formData.imagen_destacada_index] || null,
-            imagenes: imageUrls,
-            imagen_destacada_index: formData.imagen_destacada_index || 0,
-            fecha_creacion: new Date().toISOString()
+            ancho: parseFloat(formData.ancho),
+            alto: parseFloat(formData.alto),
+            categoria_id: formData.categoria_id,
+            destacado: formData.destacado
         };
 
-        await obrasStore.createObra(obraData);
+        const nuevaObra = await obrasStore.createObra(obraData);
+
+        if (!nuevaObra || !nuevaObra.id) {
+            throw new Error('No se pudo crear la obra');
+        }
+
+        if (formData.imagenes && formData.imagenes.length > 0) {
+            const bucketName = 'obras-imagenes';
+
+            for (let i = 0; i < formData.imagenes.length; i++) {
+                const imagen = formData.imagenes[i];
+                try {
+                    const imageUrl = await imageOptimization.uploadImage(imagen, {
+                        bucket: bucketName,
+                        title: formData.titulo
+                    });
+
+                    if (imageUrl) {
+                        await obrasStore.createObraImagen({
+                            obra_id: nuevaObra.id,
+                            url: imageUrl,
+                            posicion: i,
+                            es_principal: i === formData.imagen_destacada_index
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error al subir imagen:', error);
+                    $toast.error(`Error al subir una imagen: ${error.message || 'Error desconocido'}`);
+                }
+            }
+        } else if (!formData.existingImages?.length) {
+            $toast.warn('No se subieron imágenes para esta obra');
+        }
 
         $toast.success('Obra creada correctamente');
-
-        await navigateTo({ name: ROUTE_NAMES.OBRAS });
+        await navigateTo(ROUTE_NAMES.WORKS);
 
     } catch (error) {
         console.error('Error al guardar la obra:', error);
-        $toast.error('Ocurrió un error al guardar la obra. Inténtalo de nuevo.');
+        $toast.error(`Ocurrió un error al guardar la obra: ${error.message || 'Error desconocido'}`);
     } finally {
         isLoading.value = false;
     }

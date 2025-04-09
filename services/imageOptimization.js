@@ -1,9 +1,8 @@
 export const imageOptimization = {
-    // Configuración de buckets disponibles
+    // Configuración de buckets disponibles con nombres correctos
     BUCKETS: {
-        productos: 'productos',
-        obras: 'obras',
-        inspiraciones: 'inspiraciones'
+        obras: 'obras-imagenes',
+        inspiraciones: 'inspiraciones-imagenes'
     },
 
     // Configuración por defecto para imágenes
@@ -17,18 +16,18 @@ export const imageOptimization = {
 
     // Configuraciones específicas por bucket (sobreescriben los valores por defecto)
     BUCKET_CONFIGS: {
-        obras: {
+        'obras-imagenes': {
             maxWidth: 1500, // Las obras de arte pueden necesitar mayor resolución
             quality: 0.9  // Mayor calidad para obras de arte
         },
-        inspiraciones: {
+        'inspiraciones-imagenes': {
             maxWidth: 1000 // Menor resolución para inspiraciones
         }
     },
 
     // Obtener configuración para un bucket específico
     getConfigForBucket(bucket) {
-        const bucketName = this.BUCKETS[bucket] || this.BUCKETS.productos;
+        const bucketName = this.BUCKETS[bucket] || bucket;
         return {
             ...this.DEFAULT_IMAGE_CONFIG,
             ...(this.BUCKET_CONFIGS[bucketName] || {})
@@ -36,7 +35,7 @@ export const imageOptimization = {
     },
 
     // Comprimir imagen antes de subir
-    async compressImage(file, bucket = 'productos') {
+    async compressImage(file, bucket = 'obras-imagenes') {
         const config = this.getConfigForBucket(bucket);
 
         return new Promise((resolve, reject) => {
@@ -82,16 +81,16 @@ export const imageOptimization = {
     },
 
     // Generar nombre único para la imagen basado en el tipo de contenido
-    generateImageName(title = '', bucket = 'productos') {
+    generateImageName(title = '', bucket = 'obras-imagenes') {
         // Definir el prefijo según el bucket
         let baseTitle = '';
 
-        if (bucket === this.BUCKETS.obras) {
+        if (bucket === this.BUCKETS.obras || bucket === 'obras-imagenes') {
             baseTitle = title || 'obra';
-        } else if (bucket === this.BUCKETS.inspiraciones) {
+        } else if (bucket === this.BUCKETS.inspiraciones || bucket === 'inspiraciones-imagenes') {
             baseTitle = title || 'inspiracion';
         } else {
-            baseTitle = title || 'producto';
+            baseTitle = title || 'archivo';
         }
 
         // Limpiar y normalizar el título
@@ -113,7 +112,7 @@ export const imageOptimization = {
     // Subir imagen con optimización
     async uploadImage(file, options = {}) {
         try {
-            const bucketName = options.bucket || 'productos';
+            const bucketName = options.bucket || 'obras-imagenes';
             const config = this.getConfigForBucket(bucketName);
             const supabase = useSupabaseClient();
 
@@ -150,13 +149,13 @@ export const imageOptimization = {
 
             return publicUrl;
         } catch (error) {
-            console.error(`Error al subir imagen a ${options.bucket || 'productos'}:`, error);
+            console.error(`Error al subir imagen a ${options.bucket || 'obras-imagenes'}:`, error);
             throw error;
         }
     },
 
     // Eliminar imagen
-    async deleteImage(imageUrl, bucket = 'productos') {
+    async deleteImage(imageUrl, bucket = 'obras-imagenes') {
         try {
             if (!imageUrl) return true; // Si no hay URL, no hay nada que eliminar
 

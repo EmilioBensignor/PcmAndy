@@ -18,7 +18,7 @@
         </div>
         <div class="flex items-center border-t border-gray">
             <div class="w-[50%] flex justify-center items-center border-r border-gray p-3">
-                <NuxtLink :to="{ name: ROUTE_NAMES.OBRAS_EDIT, params: { id: obra.id } }">
+                <NuxtLink :to="`${ROUTE_NAMES.WORKS_EDIT}/${obra.id}`">
                     <Icon name="tabler:edit" size="1.5rem" class="text-primary" />
                 </NuxtLink>
             </div>

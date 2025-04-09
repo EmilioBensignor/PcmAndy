@@ -1,47 +1,50 @@
 <template>
     <DefaultTitleH1>Obras</DefaultTitleH1>
-    <div class="w-full flex justify-center items-center flex-wrap gap-8">
+    <div class="w-full flex justify-center items-center flex-wrap gap-6">
         <NuxtLink :to="ROUTE_NAMES.WORKS_CREATE"
             class="bg-secondary rounded-[0.625rem] shadow-md text-white py-3 px-12">
             Agregar nueva
         </NuxtLink>
         <div class="relative">
-            <input v-model="searchTerm" type="text" placeholder="Busca una obra"
+            <input v-model="searchTerm" type="text" id="search" placeholder="Busca una obra"
                 class="w-full bg-white border rounded-[0.625rem] shadow-md focus:outline-none pl-10 pr-3 py-3" />
             <Icon name="tabler:search" class="absolute left-3 top-1/2 transform -translate-y-1/2" />
         </div>
     </div>
 
-    <div v-if="isLoading" class="w-full flex justify-center mt-8">
-        <div class="flex items-center gap-2">
-            <i class="pi pi-spinner pi-spin text-lg"></i>
-            <span>Cargando obras...</span>
+    <ClientOnly v-if="isLoading">
+        <div class="w-full flex justify-center">
+            <div class="flex items-center gap-2">
+                <i class="pi pi-spinner pi-spin text-lg"></i>
+                <span>Cargando obras...</span>
+            </div>
         </div>
-    </div>
+    </ClientOnly>
 
-    <div v-else-if="filteredObras.length === 0" class="text-center mt-8">
-        <p>No hay obras disponibles.</p>
-    </div>
+    <ClientOnly v-else-if="filteredObras.length === 0">
+        <div class="text-center">
+            <p>No hay obras disponibles.</p>
+        </div>
+    </ClientOnly>
 
-    <div v-else class="grid grid-cols-1 justify-items-center md:grid-cols-2 xl:grid-cols-3 gap-8 mt-8">
-        <ObraCard v-for="obra in filteredObras" :key="obra.id" :obra="obra" @delete="confirmDelete" />
-    </div>
+    <ClientOnly v-else>
+        <div class="grid grid-cols-1 justify-items-center md:grid-cols-2 xl:grid-cols-3 gap-8">
+            <ObraCard v-for="obra in filteredObras" :key="obra.id" :obra="obra" @delete="confirmDelete" />
+        </div>
+    </ClientOnly>
 
-    <div v-if="showDeleteModal" class="fixed inset-0 flex items-center justify-center z-50">
-        <div class="fixed inset-0 bg-black opacity-50"></div>
-        <div class="bg-white rounded-lg p-6 max-w-md w-full z-10">
-            <h3 class="text-xl font-bold mb-4">Confirmar eliminación</h3>
-            <p class="mb-6">¿Estás seguro de que deseas eliminar la obra "{{ obraToDelete?.titulo }}"? Esta acción no se
-                puede deshacer.</p>
-            <div class="flex justify-end gap-4">
-                <button @click="showDeleteModal = false"
-                    class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors">
-                    Cancelar
-                </button>
-                <button @click="deleteObra"
-                    class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+    <div v-if="showDeleteModal" class="flex items-center justify-center fixed z-50 inset-0">
+        <div class="fixed inset-0 bg-black opacity-30"></div>
+        <div class="w-full max-w-sm flex flex-col gap-4 bg-white rounded-3xl p-6 z-10">
+            <h2 class="text-2xl text-center">¿Estás seguro de que deseas eliminar la obra "{{ obraToDelete?.titulo }}"?</h2>
+            <p class="text-center text-light">Esta acción es irreversible</p>
+            <div class="flex justify-center gap-4">
+                <ButtonPrimary @click="showDeleteModal = false">
+                    Cancel
+                </ButtonPrimary>
+                <ButtonSecondary @click="deleteObra">
                     Eliminar
-                </button>
+                </ButtonSecondary>
             </div>
         </div>
     </div>

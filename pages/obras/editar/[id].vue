@@ -1,105 +1,154 @@
 <template>
     <DefaultTitleH1>Editar Obra</DefaultTitleH1>
-    <div v-if="isLoading" class="w-full flex justify-center mt-8">
-        <div class="flex items-center gap-2">
-            <i class="pi pi-spinner pi-spin text-lg"></i>
-            <span>Cargando obra...</span>
-        </div>
-    </div>
-    <div v-else-if="!obra" class="text-center mt-8">
-        <p>No se encontró la obra solicitada.</p>
-        <NuxtLink :to="{ name: ROUTE_NAMES.OBRAS }" class="mt-4 inline-block primaryButton">
-            Volver a la lista
-        </NuxtLink>
-    </div>
-    <FormObra v-else :initial-data="obra" :is-editing="true" :is-loading="isSaving" @submit="handleSubmit" />
+    <FormObra :initial-data="obraData" :is-editing="true" :is-loading="isSubmitting" @submit="handleSubmit" />
 </template>
 
 <script setup>
 import { useObrasStore } from '~/store/obras';
+import { imageOptimization } from '~/services/imageOptimization';
 import { ROUTE_NAMES } from '~/constants/ROUTE_NAMES';
 
+const route = useRoute();
+const router = useRouter();
 const obrasStore = useObrasStore();
 const { $toast } = useNuxtApp();
-const router = useRouter();
-const route = useRoute();
 
-const obra = ref(null);
+const obraId = computed(() => route.params.id);
+const obraData = ref({});
 const isLoading = ref(true);
-const isSaving = ref(false);
+const isSubmitting = ref(false);
 
 onMounted(async () => {
     try {
-        if (obrasStore.obras.length === 0) {
-            await obrasStore.fetchObras();
-        }
-
-        const obraEncontrada = obrasStore.getObraById(route.params.id);
-
-        if (!obraEncontrada) {
-            $toast.error('Obra no encontrada');
-            return;
-        }
-
-        obra.value = obraEncontrada;
+        // Cargar los datos de la obra
+        const obra = await obrasStore.fetchObraById(obraId.value);
+        obraData.value = obra;
     } catch (error) {
         console.error('Error al cargar la obra:', error);
         $toast.error('No se pudo cargar la información de la obra');
+        router.push(ROUTE_NAMES.WORKS);
     } finally {
         isLoading.value = false;
     }
 });
 
 const handleSubmit = async (formData) => {
-    isSaving.value = true;
+    isSubmitting.value = true;
 
     try {
         $toast.info('Actualizando la obra...');
 
-        const imageUrls = [...(obra.value.imagenes || [])];
-        const imagenDestacada = obra.value.imagen_url;
+        const imagenesToDelete = [];
+        if (obraData.value.imagenes && formData.existingImages) {
+            obraData.value.imagenes.forEach(imageUrl => {
+                if (!formData.existingImages.includes(imageUrl)) {
+                    imagenesToDelete.push(imageUrl);
+                }
+            });
+        }
 
         if (formData.imagenes && formData.imagenes.length > 0) {
-            for (const imagen of formData.imagenes) {
+            const bucketName = 'obras-imagenes';
+
+            for (let i = 0; i < formData.imagenes.length; i++) {
+                const imagen = formData.imagenes[i];
                 try {
-                    const imageUrl = await obrasStore.uploadImage(imagen, {
+                    const imageUrl = await imageOptimization.uploadImage(imagen, {
+                        bucket: bucketName,
                         title: formData.titulo
                     });
+
                     if (imageUrl) {
-                        imageUrls.push(imageUrl);
+                        const isDestacada = formData.imagen_destacada_index === (formData.existingImages?.length || 0) + i;
+
+                        await obrasStore.createObraImagen({
+                            obra_id: obraId.value,
+                            url: imageUrl,
+                            posicion: (formData.existingImages?.length || 0) + i,
+                            es_principal: isDestacada
+                        });
                     }
                 } catch (error) {
                     console.error('Error al subir imagen:', error);
+                    $toast.error(`Error al subir una imagen: ${error.message || 'Error desconocido'}`);
                 }
             }
         }
 
-        const obraData = {
+        const obraUpdateData = {
             titulo: formData.titulo,
             descripcion: formData.descripcion,
             anio: parseInt(formData.anio),
-            dimensiones: {
-                ancho: parseFloat(formData.ancho),
-                alto: parseFloat(formData.alto)
-            },
-            categoria: formData.categoria,
-            destacado: formData.destacado,
-            imagen_url: imageUrls[formData.imagen_destacada_index] || imagenDestacada,
-            imagenes: imageUrls,
-            imagen_destacada_index: formData.imagen_destacada_index || 0
+            ancho: parseFloat(formData.ancho),
+            alto: parseFloat(formData.alto),
+            categoria_id: formData.categoria_id,
+            destacado: formData.destacado
         };
 
-        await obrasStore.updateObra(route.params.id, obraData);
+        await obrasStore.updateObra(obraId.value, obraUpdateData);
+
+        if (formData.existingImages && formData.existingImages.length > 0 &&
+            formData.imagen_destacada_index < formData.existingImages.length) {
+
+            try {
+                const { data: imagenes } = await useSupabaseClient()
+                    .from('obras_imagenes')
+                    .select('id, url, posicion')
+                    .eq('obra_id', obraId.value)
+                    .order('posicion', { ascending: true });
+
+                if (imagenes && imagenes.length > 0) {
+                    // Primero quitar destacada de todas las imágenes
+                    await useSupabaseClient()
+                        .from('obras_imagenes')
+                        .update({ es_principal: false })
+                        .eq('obra_id', obraId.value);
+
+                    // Buscar la imagen destacada según la URL
+                    const destacadaUrl = formData.existingImages[formData.imagen_destacada_index];
+                    const imagenDestacada = imagenes.find(img => img.url === destacadaUrl);
+
+                    if (imagenDestacada) {
+                        // Marcar la imagen como destacada
+                        await useSupabaseClient()
+                            .from('obras_imagenes')
+                            .update({ es_principal: true })
+                            .eq('id', imagenDestacada.id);
+                    }
+                }
+            } catch (error) {
+                console.error('Error al actualizar imagen destacada:', error);
+            }
+        }
+
+        // 6. Eliminar imágenes que ya no se necesitan
+        for (const imageUrl of imagenesToDelete) {
+            try {
+                // Primero buscar el ID de la imagen en la tabla obras_imagenes
+                const { data: imagenData } = await useSupabaseClient()
+                    .from('obras_imagenes')
+                    .select('id')
+                    .eq('url', imageUrl)
+                    .eq('obra_id', obraId.value)
+                    .single();
+
+                if (imagenData) {
+                    // Eliminar el registro usando la función del store
+                    await obrasStore.deleteObraImagen(imagenData.id);
+                }
+            } catch (error) {
+                console.error(`Error al eliminar imagen ${imageUrl}:`, error);
+            }
+        }
 
         $toast.success('Obra actualizada correctamente');
-
-        await navigateTo({ name: ROUTE_NAMES.OBRAS });
+        router.push({ name: ROUTE_NAMES.OBRAS });
 
     } catch (error) {
         console.error('Error al actualizar la obra:', error);
-        $toast.error('Ocurrió un error al actualizar la obra. Inténtalo de nuevo.');
+        $toast.error(`Ocurrió un error al actualizar la obra: ${error.message || 'Error desconocido'}`);
     } finally {
-        isSaving.value = false;
+        isSubmitting.value = false;
     }
 };
 </script>

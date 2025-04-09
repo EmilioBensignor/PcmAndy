@@ -1,6 +1,6 @@
 <template>
     <div class="w-full flex flex-col gap-2">
-        <FormLabel :for="id">{{ label }}</FormLabel>
+        <p class="font-light">{{ label }}</p>
         <div v-if="existingFileUrl && !modelValue" class="w-full flex items-center flex-wrap gap-8 mt-4">
             <img :src="existingFileUrl" alt="Imagen existente" class="w-full mx-52 max-h-52 object-contain" />
             <button type="button" class="primaryButton" @click="showFileUpload = true" v-if="!showFileUpload">
