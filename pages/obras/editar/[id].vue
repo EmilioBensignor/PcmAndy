@@ -20,7 +20,6 @@ const isSubmitting = ref(false);
 
 onMounted(async () => {
     try {
-        // Cargar los datos de la obra
         const obra = await obrasStore.fetchObraById(obraId.value);
         obraData.value = obra;
     } catch (error) {
@@ -98,18 +97,15 @@ const handleSubmit = async (formData) => {
                     .order('posicion', { ascending: true });
 
                 if (imagenes && imagenes.length > 0) {
-                    // Primero quitar destacada de todas las imágenes
                     await useSupabaseClient()
                         .from('obras_imagenes')
                         .update({ es_principal: false })
                         .eq('obra_id', obraId.value);
 
-                    // Buscar la imagen destacada según la URL
                     const destacadaUrl = formData.existingImages[formData.imagen_destacada_index];
                     const imagenDestacada = imagenes.find(img => img.url === destacadaUrl);
 
                     if (imagenDestacada) {
-                        // Marcar la imagen como destacada
                         await useSupabaseClient()
                             .from('obras_imagenes')
                             .update({ es_principal: true })
@@ -121,10 +117,8 @@ const handleSubmit = async (formData) => {
             }
         }
 
-        // 6. Eliminar imágenes que ya no se necesitan
         for (const imageUrl of imagenesToDelete) {
             try {
-                // Primero buscar el ID de la imagen en la tabla obras_imagenes
                 const { data: imagenData } = await useSupabaseClient()
                     .from('obras_imagenes')
                     .select('id')
@@ -133,7 +127,6 @@ const handleSubmit = async (formData) => {
                     .single();
 
                 if (imagenData) {
-                    // Eliminar el registro usando la función del store
                     await obrasStore.deleteObraImagen(imagenData.id);
                 }
             } catch (error) {

@@ -22,13 +22,11 @@ export const useObraValidation = (formData, errors, isEditing = false) => {
     };
 
     const validateImagenes = () => {
-        // Si estamos editando y hay imágenes existentes, no es obligatorio subir nuevas
         if (isEditing && formData.existingImages && formData.existingImages.length > 0) {
             errors.imagenes = '';
             return true;
         }
 
-        // Si no hay imágenes ni existentes ni nuevas, mostramos error
         if (!formData.imagenes || formData.imagenes.length === 0) {
             errors.imagenes = 'Debes subir al menos una imagen';
             return false;

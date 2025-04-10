@@ -20,7 +20,7 @@
             {{ errorMsg }}
         </DefaultError>
         <Button :loading="loading" :class="{ active: isValid }" class="primaryButton loadingButton"
-        :label="loading ? '' : 'Registrarse'" type="submit" />
+            :label="loading ? '' : 'Registrarse'" type="submit" />
     </FormLayout>
 </template>
 
@@ -38,21 +38,18 @@ const client = useSupabaseClient();
 const toast = useToast();
 const router = useRouter();
 
-// Estado del formulario
 const form = reactive({
     email: '',
     password: '',
     passwordConfirm: ''
 });
 
-// Estado de errores
 const errors = reactive({
     email: null,
     password: null,
     passwordConfirm: null
 });
 
-// Estado de carga y mensajes
 const loading = ref(false);
 const checkingPassword = ref(false);
 const errorMsg = ref('');
@@ -60,7 +57,6 @@ const isPasswordCompromised = ref(false);
 const passwordCheckCache = reactive(new Map());
 const passwordCheckTimeout = ref(null);
 
-// Computar validez del formulario
 const isValid = computed(() => {
     return !errors.email &&
         !errors.password &&
@@ -71,7 +67,6 @@ const isValid = computed(() => {
         !isPasswordCompromised.value;
 });
 
-// Validación de email
 const validateEmail = () => {
     if (!form.email) {
         errors.email = 'El email es requerido';
@@ -88,25 +83,20 @@ const validateEmail = () => {
     return true;
 };
 
-// Debounced password input handler
 const handlePasswordInput = () => {
-    // Limpiar timeout anterior si existe
     if (passwordCheckTimeout.value) {
         clearTimeout(passwordCheckTimeout.value);
     }
 
-    // Primero validar reglas básicas
     validatePassword();
 
-    // Si la contraseña es válida, verificar si está comprometida después de un delay
     if (!errors.password && form.password && form.password.length >= 8) {
         passwordCheckTimeout.value = setTimeout(async () => {
             await checkPasswordCompromise();
-        }, 800); // 800ms debounce
+        }, 800);
     }
 };
 
-// Validación básica de contraseña
 const validatePassword = () => {
     if (!form.password) {
         errors.password = 'La contraseña es requerida';
@@ -153,11 +143,9 @@ const validatePassword = () => {
     return true;
 };
 
-// Verificar si la contraseña está comprometida
 const checkPasswordCompromise = async () => {
     if (!form.password || form.password.length < 8) return;
 
-    // Verificar caché
     if (passwordCheckCache.has(form.password)) {
         isPasswordCompromised.value = passwordCheckCache.get(form.password);
 
@@ -172,7 +160,6 @@ const checkPasswordCompromise = async () => {
         checkingPassword.value = true;
         isPasswordCompromised.value = await checkPasswordLeak(form.password);
 
-        // Guardar resultado en caché
         passwordCheckCache.set(form.password, isPasswordCompromised.value);
 
         if (isPasswordCompromised.value) {
@@ -185,7 +172,6 @@ const checkPasswordCompromise = async () => {
     }
 };
 
-// Validación de confirmación de contraseña
 const validatePasswordConfirm = () => {
     if (!form.passwordConfirm) {
         errors.passwordConfirm = 'La confirmación de contraseña es requerida';
@@ -201,7 +187,6 @@ const validatePasswordConfirm = () => {
     return true;
 };
 
-// Verificar si una contraseña se ha filtrado (API haveibeenpwned)
 async function checkPasswordLeak(password) {
     try {
         const encoder = new TextEncoder();
@@ -243,7 +228,6 @@ async function checkPasswordLeak(password) {
     }
 }
 
-// Función de registro
 async function signUp() {
     loading.value = true;
     errorMsg.value = '';

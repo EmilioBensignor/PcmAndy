@@ -17,11 +17,9 @@ export const useCategoriasStore = defineStore('categorias', {
             const { getFromCache, saveToCache } = useSupabaseCache();
             const cacheKey = 'categorias_data';
 
-            // Intentar obtener datos desde caché
             const cachedData = getFromCache(cacheKey);
             if (cachedData) {
                 this.categorias = cachedData;
-                // Opcionalmente recargar en segundo plano
                 this.refreshCategoriasInBackground();
                 return;
             }
@@ -37,7 +35,6 @@ export const useCategoriasStore = defineStore('categorias', {
                 if (error) throw error;
 
                 this.categorias = data;
-                // Guardar en caché por 60 minutos - estos datos cambian poco
                 saveToCache(cacheKey, data, 60);
             } catch (error) {
                 this.error = error.message;
@@ -47,7 +44,6 @@ export const useCategoriasStore = defineStore('categorias', {
             }
         },
 
-        // Método para actualizar en segundo plano
         async refreshCategoriasInBackground() {
             try {
                 const supabase = useSupabaseClient();
@@ -70,14 +66,12 @@ export const useCategoriasStore = defineStore('categorias', {
             const { subscribeToTable } = useRealtimeSubscription();
 
             return subscribeToTable('categorias', (payload) => {
-                // Manejar actualizaciones en tiempo real
                 if (payload.eventType === 'INSERT') {
                     const newCategoria = payload.new;
                     this.categorias = [...this.categorias, newCategoria].sort((a, b) =>
                         a.nombre.localeCompare(b.nombre)
                     );
 
-                    // Actualizar caché
                     const { getFromCache, saveToCache } = useSupabaseCache();
                     const cachedData = getFromCache('categorias_data');
                     if (cachedData) {
@@ -95,7 +89,6 @@ export const useCategoriasStore = defineStore('categorias', {
                         .map(item => item.id === updatedCategoria.id ? updatedCategoria : item)
                         .sort((a, b) => a.nombre.localeCompare(b.nombre));
 
-                    // Actualizar caché
                     const { getFromCache, saveToCache } = useSupabaseCache();
                     const cachedData = getFromCache('categorias_data');
                     if (cachedData) {
@@ -111,7 +104,6 @@ export const useCategoriasStore = defineStore('categorias', {
                     const deletedId = payload.old.id;
                     this.categorias = this.categorias.filter(item => item.id !== deletedId);
 
-                    // Actualizar caché
                     const { getFromCache, saveToCache } = useSupabaseCache();
                     const cachedData = getFromCache('categorias_data');
                     if (cachedData) {

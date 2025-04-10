@@ -1,11 +1,9 @@
 export const imageOptimization = {
-    // Configuración de buckets disponibles con nombres correctos
     BUCKETS: {
         obras: 'obras-imagenes',
         inspiraciones: 'inspiraciones-imagenes'
     },
 
-    // Configuración por defecto para imágenes
     DEFAULT_IMAGE_CONFIG: {
         maxSize: 5 * 1024 * 1024, // 5MB
         allowedTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
@@ -14,18 +12,16 @@ export const imageOptimization = {
         outputFormat: 'webp'
     },
 
-    // Configuraciones específicas por bucket (sobreescriben los valores por defecto)
     BUCKET_CONFIGS: {
         'obras-imagenes': {
-            maxWidth: 1500, // Las obras de arte pueden necesitar mayor resolución
-            quality: 0.9  // Mayor calidad para obras de arte
+            maxWidth: 1500,
+            quality: 0.9
         },
         'inspiraciones-imagenes': {
-            maxWidth: 1000 // Menor resolución para inspiraciones
+            maxWidth: 1000
         }
     },
 
-    // Obtener configuración para un bucket específico
     getConfigForBucket(bucket) {
         const bucketName = this.BUCKETS[bucket] || bucket;
         return {
@@ -34,7 +30,6 @@ export const imageOptimization = {
         };
     },
 
-    // Comprimir imagen antes de subir
     async compressImage(file, bucket = 'obras-imagenes') {
         const config = this.getConfigForBucket(bucket);
 
@@ -49,7 +44,6 @@ export const imageOptimization = {
                     let width = img.width;
                     let height = img.height;
 
-                    // Redimensionar si excede el ancho máximo
                     if (width > config.maxWidth) {
                         const ratio = config.maxWidth / width;
                         width = config.maxWidth;
@@ -80,9 +74,7 @@ export const imageOptimization = {
         });
     },
 
-    // Generar nombre único para la imagen basado en el tipo de contenido
     generateImageName(title = '', bucket = 'obras-imagenes') {
-        // Definir el prefijo según el bucket
         let baseTitle = '';
 
         if (bucket === this.BUCKETS.obras || bucket === 'obras-imagenes') {
@@ -93,14 +85,13 @@ export const imageOptimization = {
             baseTitle = title || 'archivo';
         }
 
-        // Limpiar y normalizar el título
         const cleanTitle = baseTitle
             .toLowerCase()
             .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
-            .replace(/[^a-z0-9]+/g, '-')     // Reemplazar caracteres especiales por guiones
-            .replace(/^-+|-+$/g, '')         // Eliminar guiones al inicio y final
-            .substring(0, 30);               // Limitar longitud
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .substring(0, 30);
 
         const timestamp = Date.now();
         const randomString = Math.random().toString(36).substring(2, 8);
@@ -109,40 +100,33 @@ export const imageOptimization = {
         return `${cleanTitle}-${timestamp}-${randomString}.${config.outputFormat}`;
     },
 
-    // Subir imagen con optimización
     async uploadImage(file, options = {}) {
         try {
             const bucketName = options.bucket || 'obras-imagenes';
             const config = this.getConfigForBucket(bucketName);
             const supabase = useSupabaseClient();
 
-            // Validar tipo de archivo
             if (!config.allowedTypes.includes(file.type)) {
                 throw new Error(`Tipo de archivo no permitido. Tipos permitidos: ${config.allowedTypes.join(', ')}`);
             }
 
-            // Validar tamaño
             if (file.size > config.maxSize) {
                 throw new Error(`El archivo excede el tamaño máximo permitido (${config.maxSize / (1024 * 1024)}MB)`);
             }
 
-            // Comprimir imagen si no es un GIF (los GIFs pierden la animación al comprimirse)
             let fileToUpload = file;
             if (file.type !== 'image/gif') {
                 fileToUpload = await this.compressImage(file, bucketName);
             }
 
-            // Generar nombre único
             const fileName = this.generateImageName(options.title, bucketName);
 
-            // Subir a Supabase
             const { error: uploadError } = await supabase.storage
                 .from(bucketName)
                 .upload(fileName, fileToUpload);
 
             if (uploadError) throw uploadError;
 
-            // Obtener URL pública
             const { data: { publicUrl } } = supabase.storage
                 .from(bucketName)
                 .getPublicUrl(fileName);
@@ -154,19 +138,17 @@ export const imageOptimization = {
         }
     },
 
-    // Eliminar imagen
     async deleteImage(imageUrl, bucket = 'obras-imagenes') {
         try {
-            if (!imageUrl) return true; // Si no hay URL, no hay nada que eliminar
+            if (!imageUrl) return true;
 
             const supabase = useSupabaseClient();
 
-            // Extraer nombre del archivo de la URL
             let fileName;
             if (imageUrl.includes('/')) {
                 fileName = imageUrl.split('/').pop();
             } else {
-                fileName = imageUrl; // Si ya es solo el nombre del archivo
+                fileName = imageUrl;
             }
 
             const { error } = await supabase.storage

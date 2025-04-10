@@ -73,7 +73,7 @@ export const useInspiracionesStore = defineStore('inspiraciones', {
 
                 if (error) throw error;
 
-                this.inspiraciones.unshift(data); // Añadir al principio del array
+                this.inspiraciones.unshift(data);
                 return data;
             } catch (error) {
                 console.error('Error al crear inspiración:', error);
@@ -98,7 +98,6 @@ export const useInspiracionesStore = defineStore('inspiraciones', {
 
                 if (error) throw error;
 
-                // Actualizar la inspiración en el state
                 const index = this.inspiraciones.findIndex(inspiracion => inspiracion.id === id);
                 if (index !== -1) {
                     this.inspiraciones[index] = data;
@@ -126,7 +125,6 @@ export const useInspiracionesStore = defineStore('inspiraciones', {
 
                 if (error) throw error;
 
-                // Eliminar la inspiración del state
                 this.inspiraciones = this.inspiraciones.filter(inspiracion => inspiracion.id !== id);
                 return true;
             } catch (error) {
@@ -139,14 +137,12 @@ export const useInspiracionesStore = defineStore('inspiraciones', {
         },
 
         setupRealtimeUpdates() {
-            // Desuscribirse de cualquier suscripción previa
             if (this.subscription) {
                 this.subscription.unsubscribe();
             }
 
             const supabase = useSupabaseClient();
 
-            // Crear nueva suscripción
             this.subscription = supabase
                 .channel('inspiraciones-changes')
                 .on('postgres_changes', {
@@ -154,7 +150,6 @@ export const useInspiracionesStore = defineStore('inspiraciones', {
                     schema: 'public',
                     table: 'inspiraciones'
                 }, (payload) => {
-                    // Manejar los diferentes eventos
                     if (payload.eventType === 'INSERT') {
                         this.inspiraciones.unshift(payload.new);
                     } else if (payload.eventType === 'UPDATE') {
@@ -168,7 +163,6 @@ export const useInspiracionesStore = defineStore('inspiraciones', {
                 })
                 .subscribe();
 
-            // Retornar función para desuscribirse
             return () => {
                 if (this.subscription) {
                     this.subscription.unsubscribe();

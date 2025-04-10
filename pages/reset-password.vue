@@ -11,7 +11,7 @@
             {{ errorMsg }}
         </DefaultError>
         <Button :loading="loading" :class="{ active: isValid }" class="primaryButton loadingButton"
-        :label="loading ? '' : 'Actualizar contraseña'" type="submit" />
+            :label="loading ? '' : 'Actualizar contraseña'" type="submit" />
     </FormLayout>
 </template>
 
@@ -28,24 +28,20 @@ const client = useSupabaseClient();
 const router = useRouter();
 const route = useRoute();
 
-// Estado del formulario
 const form = reactive({
     password: '',
     confirmPassword: ''
 });
 
-// Estado de errores
 const errors = reactive({
     password: null,
     confirmPassword: null
 });
 
-// Estado de carga y mensajes
 const loading = ref(false);
 const errorMsg = ref('');
 const passwordUpdateAttempted = ref(false);
 
-// Computar validez del formulario
 const isValid = computed(() => {
     return !errors.password &&
         !errors.confirmPassword &&
@@ -54,7 +50,6 @@ const isValid = computed(() => {
         form.password === form.confirmPassword;
 });
 
-// Verificar token de restablecimiento al cargar el componente
 onMounted(async () => {
     try {
         const { data, error } = await client.auth.getSession();
@@ -66,7 +61,6 @@ onMounted(async () => {
     }
 });
 
-// Validación de contraseña
 const validatePassword = () => {
     if (!form.password) {
         errors.password = 'La contraseña es requerida';
@@ -81,7 +75,6 @@ const validatePassword = () => {
     return true;
 };
 
-// Validación de confirmación de contraseña
 const validateConfirmPassword = () => {
     if (!form.confirmPassword) {
         errors.confirmPassword = 'Debe confirmar la contraseña';
@@ -95,7 +88,6 @@ const validateConfirmPassword = () => {
     return true;
 };
 
-// Función para actualizar contraseña
 const handleResetPassword = async () => {
     if (passwordUpdateAttempted.value) {
         errorMsg.value = 'El proceso de actualización ya está en curso. Por favor espere.';

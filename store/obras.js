@@ -20,7 +20,6 @@ export const useObrasStore = defineStore('obras', {
             this.error = null;
 
             try {
-                // Obtener obras con sus datos relacionados
                 const { data, error } = await useSupabaseClient()
                     .from('obras')
                     .select(`
@@ -32,12 +31,9 @@ export const useObrasStore = defineStore('obras', {
 
                 if (error) throw error;
 
-                // Procesar los datos para manejar las relaciones
                 const processedData = data.map(obra => {
-                    // Extraer URLs de imágenes
                     const imagenes = obra.obras_imagenes ? obra.obras_imagenes.map(img => img.url) : [];
 
-                    // Encontrar la imagen principal
                     const imagenPrincipal = obra.obras_imagenes ?
                         obra.obras_imagenes.find(img => img.es_principal)?.url : null;
 
@@ -78,14 +74,11 @@ export const useObrasStore = defineStore('obras', {
 
                 if (error) throw error;
 
-                // Extraer URLs de imágenes
                 const imagenes = data.obras_imagenes ? data.obras_imagenes.map(img => img.url) : [];
 
-                // Encontrar la imagen principal
                 const imagenPrincipal = data.obras_imagenes ?
                     data.obras_imagenes.find(img => img.es_principal)?.url : null;
 
-                // Procesar los datos para manejar las relaciones
                 const processedData = {
                     ...data,
                     imagenes,
@@ -109,7 +102,6 @@ export const useObrasStore = defineStore('obras', {
             this.error = null;
 
             try {
-                // Asegurarnos de que estamos enviando datos válidos para la tabla obras
                 const obraData = {
                     titulo: obra.titulo,
                     descripcion: obra.descripcion,
@@ -128,7 +120,6 @@ export const useObrasStore = defineStore('obras', {
 
                 if (error) throw error;
 
-                // Añadir el nuevo elemento al state
                 const nuevaObra = {
                     ...data,
                     imagenes: [],
@@ -137,7 +128,6 @@ export const useObrasStore = defineStore('obras', {
                     categoria_id: data.categoria_id
                 };
 
-                // Cargar la información de categoría si está disponible
                 if (data.categoria_id) {
                     try {
                         const { data: categoriaData } = await useSupabaseClient()
@@ -178,16 +168,13 @@ export const useObrasStore = defineStore('obras', {
 
                 if (error) throw error;
 
-                // Actualizar el state si la obra está en el store
                 const obraIndex = this.obras.findIndex(obra => obra.id === imagenData.obra_id);
                 if (obraIndex !== -1) {
-                    // Añadir la URL a las imágenes de la obra
                     if (!this.obras[obraIndex].imagenes) {
                         this.obras[obraIndex].imagenes = [];
                     }
                     this.obras[obraIndex].imagenes.push(imagenData.url);
 
-                    // Si es la imagen principal o no hay imagen principal, actualizar imagen_url
                     if (imagenData.es_principal || !this.obras[obraIndex].imagen_url) {
                         this.obras[obraIndex].imagen_url = imagenData.url;
                     }
@@ -205,7 +192,6 @@ export const useObrasStore = defineStore('obras', {
             this.error = null;
 
             try {
-                // Datos a actualizar en Supabase
                 const updateData = {
                     titulo: updates.titulo,
                     descripcion: updates.descripcion,
@@ -225,7 +211,6 @@ export const useObrasStore = defineStore('obras', {
 
                 if (error) throw error;
 
-                // Obtener las imágenes asociadas a esta obra
                 const { data: imagenesData } = await useSupabaseClient()
                     .from('obras_imagenes')
                     .select('id, url, posicion, es_principal')
@@ -236,7 +221,6 @@ export const useObrasStore = defineStore('obras', {
                     imagenesData.find(img => img.es_principal)?.url :
                     (imagenes.length > 0 ? imagenes[0] : null);
 
-                // Procesar datos para el state
                 const updatedObra = {
                     ...data,
                     imagenes,
@@ -245,7 +229,6 @@ export const useObrasStore = defineStore('obras', {
                     categoria_id: data.categoria_id
                 };
 
-                // Cargar la información de categoría si está disponible
                 if (data.categoria_id) {
                     try {
                         const { data: categoriaData } = await useSupabaseClient()
@@ -262,7 +245,6 @@ export const useObrasStore = defineStore('obras', {
                     }
                 }
 
-                // Actualizar la obra en el state
                 const index = this.obras.findIndex(obra => obra.id === id);
                 if (index !== -1) {
                     this.obras[index] = updatedObra;
@@ -299,7 +281,6 @@ export const useObrasStore = defineStore('obras', {
 
         async deleteObraImagen(id) {
             try {
-                // Primero obtener la imagen para conocer la URL
                 const { data, error: fetchError } = await useSupabaseClient()
                     .from('obras_imagenes')
                     .select('url, obra_id')
@@ -308,7 +289,6 @@ export const useObrasStore = defineStore('obras', {
 
                 if (fetchError) throw fetchError;
 
-                // Eliminar el registro de la tabla
                 const { error: deleteError } = await useSupabaseClient()
                     .from('obras_imagenes')
                     .delete()
@@ -316,7 +296,6 @@ export const useObrasStore = defineStore('obras', {
 
                 if (deleteError) throw deleteError;
 
-                // Intentar eliminar el archivo del storage
                 if (data && data.url) {
                     try {
                         await imageOptimization.deleteImage(data.url, 'obras-imagenes');
@@ -325,14 +304,11 @@ export const useObrasStore = defineStore('obras', {
                     }
                 }
 
-                // Actualizar el state si la obra está en el store
                 if (data && data.obra_id) {
                     const obraIndex = this.obras.findIndex(obra => obra.id === data.obra_id);
                     if (obraIndex !== -1 && this.obras[obraIndex].imagenes) {
-                        // Eliminar la URL de las imágenes de la obra
                         this.obras[obraIndex].imagenes = this.obras[obraIndex].imagenes.filter(url => url !== data.url);
 
-                        // Si era la imagen principal, actualizar imagen_url con la primera disponible
                         if (this.obras[obraIndex].imagen_url === data.url) {
                             this.obras[obraIndex].imagen_url = this.obras[obraIndex].imagenes.length > 0 ?
                                 this.obras[obraIndex].imagenes[0] : null;
@@ -352,7 +328,6 @@ export const useObrasStore = defineStore('obras', {
             this.error = null;
 
             try {
-                // Primero, obtener las imágenes asociadas a esta obra
                 const { data: imagenesData, error: imgError } = await useSupabaseClient()
                     .from('obras_imagenes')
                     .select('id, url')
@@ -360,9 +335,7 @@ export const useObrasStore = defineStore('obras', {
 
                 if (imgError) throw imgError;
 
-                // Eliminar cada imagen de la tabla obras_imagenes y del storage
                 if (imagenesData && imagenesData.length > 0) {
-                    // Eliminar registros de la tabla
                     const { error: deleteImgError } = await useSupabaseClient()
                         .from('obras_imagenes')
                         .delete()
@@ -370,7 +343,6 @@ export const useObrasStore = defineStore('obras', {
 
                     if (deleteImgError) throw deleteImgError;
 
-                    // Eliminar archivos del storage
                     for (const imagen of imagenesData) {
                         try {
                             await imageOptimization.deleteImage(imagen.url, 'obras-imagenes');
@@ -380,7 +352,6 @@ export const useObrasStore = defineStore('obras', {
                     }
                 }
 
-                // Eliminar la obra de la tabla obras
                 const { error } = await useSupabaseClient()
                     .from('obras')
                     .delete()
@@ -388,7 +359,6 @@ export const useObrasStore = defineStore('obras', {
 
                 if (error) throw error;
 
-                // Eliminar la obra del state
                 this.obras = this.obras.filter(obra => obra.id !== id);
                 return true;
             } catch (error) {
@@ -401,14 +371,12 @@ export const useObrasStore = defineStore('obras', {
         },
 
         setupRealtimeUpdates() {
-            // Desuscribirse de cualquier suscripción previa
             if (this.subscription) {
                 this.subscription.unsubscribe();
             }
 
             const supabase = useSupabaseClient();
 
-            // Crear nueva suscripción para la tabla obras
             this.subscription = supabase
                 .channel('obras-changes')
                 .on('postgres_changes', {
@@ -427,7 +395,6 @@ export const useObrasStore = defineStore('obras', {
                 })
                 .subscribe();
 
-            // Retornar función para desuscribirse
             return () => {
                 if (this.subscription) {
                     this.subscription.unsubscribe();
@@ -437,9 +404,7 @@ export const useObrasStore = defineStore('obras', {
         },
 
         async handleObraChanges(payload, supabase) {
-            // Manejar los diferentes eventos en la tabla obras
             if (payload.eventType === 'INSERT') {
-                // Obtener datos completos incluyendo relaciones
                 try {
                     const { data } = await supabase
                         .from('obras')
@@ -452,7 +417,6 @@ export const useObrasStore = defineStore('obras', {
                         .single();
 
                     if (data) {
-                        // Procesar los datos
                         const imagenes = data.obras_imagenes ? data.obras_imagenes.map(img => img.url) : [];
                         const imagenPrincipal = data.obras_imagenes ?
                             data.obras_imagenes.find(img => img.es_principal)?.url :
@@ -472,7 +436,6 @@ export const useObrasStore = defineStore('obras', {
                     console.warn('Error al procesar nueva obra:', error);
                 }
             } else if (payload.eventType === 'UPDATE') {
-                // Obtener datos completos incluyendo relaciones
                 try {
                     const { data } = await supabase
                         .from('obras')
@@ -485,7 +448,6 @@ export const useObrasStore = defineStore('obras', {
                         .single();
 
                     if (data) {
-                        // Procesar los datos
                         const imagenes = data.obras_imagenes ? data.obras_imagenes.map(img => img.url) : [];
                         const imagenPrincipal = data.obras_imagenes ?
                             data.obras_imagenes.find(img => img.es_principal)?.url :
@@ -513,22 +475,18 @@ export const useObrasStore = defineStore('obras', {
         },
 
         async handleObraImagenChanges(payload, supabase) {
-            // Manejar los diferentes eventos en la tabla obras_imagenes
             if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
-                // Actualizar la obra correspondiente en el store
                 const obraId = payload.new.obra_id;
                 const index = this.obras.findIndex(obra => obra.id === obraId);
 
                 if (index !== -1) {
                     try {
-                        // Obtener todas las imágenes actualizadas para esta obra
                         const { data } = await supabase
                             .from('obras_imagenes')
                             .select('id, url, posicion, es_principal')
                             .eq('obra_id', obraId);
 
                         if (data) {
-                            // Actualizar las imágenes en el store
                             const imagenes = data.map(img => img.url);
                             const imagenPrincipal = data.find(img => img.es_principal)?.url ||
                                 (imagenes.length > 0 ? imagenes[0] : null);
@@ -541,17 +499,14 @@ export const useObrasStore = defineStore('obras', {
                     }
                 }
             } else if (payload.eventType === 'DELETE') {
-                // Actualizar la obra correspondiente en el store
                 const obraId = payload.old.obra_id;
                 const index = this.obras.findIndex(obra => obra.id === obraId);
 
                 if (index !== -1) {
-                    // Eliminar la URL de las imágenes de la obra
                     if (this.obras[index].imagenes) {
                         this.obras[index].imagenes = this.obras[index].imagenes.filter(url => url !== payload.old.url);
                     }
 
-                    // Si era la imagen principal, actualizar imagen_url
                     if (this.obras[index].imagen_url === payload.old.url) {
                         this.obras[index].imagen_url = this.obras[index].imagenes.length > 0 ?
                             this.obras[index].imagenes[0] : null;

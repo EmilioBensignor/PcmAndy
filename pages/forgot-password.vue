@@ -31,22 +31,18 @@ definePageMeta({
 const client = useSupabaseClient();
 const router = useRouter();
 
-// Estado del formulario
 const form = reactive({
     email: ''
 });
 
-// Estado de errores
 const errors = reactive({
     email: null
 });
 
-// Estado de carga y mensajes
 const loading = ref(false);
 const errorMsg = ref('');
 const emailRequestCache = ref(new Set());
 
-// Computar validez del formulario
 const isValid = computed(() => {
     return !errors.email && form.email;
 });
@@ -58,7 +54,6 @@ onMounted(() => {
     }
 });
 
-// Validación de email
 const validateEmail = () => {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
@@ -75,7 +70,6 @@ const validateEmail = () => {
     return true;
 };
 
-// Función para solicitar restablecimiento de contraseña
 const handleForgotPassword = async () => {
     loading.value = true;
     errorMsg.value = '';
@@ -86,7 +80,6 @@ const handleForgotPassword = async () => {
         return;
     }
 
-    // Verificar si ya se envió un email recientemente a esta dirección
     const cleanEmail = form.email.trim();
     if (emailRequestCache.value.has(cleanEmail)) {
         loading.value = false;
@@ -109,7 +102,6 @@ const handleForgotPassword = async () => {
             errorMsg.value = handleSupabaseError(error);
         };
 
-        // Agregar email a caché para prevenir peticiones duplicadas
         emailRequestCache.value.add(cleanEmail);
         setTimeout(() => {
             emailRequestCache.value.delete(cleanEmail);

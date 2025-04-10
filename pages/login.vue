@@ -34,23 +34,19 @@ const client = useSupabaseClient();
 const router = useRouter();
 const route = useRoute();
 
-// Estado del formulario
 const form = reactive({
     email: '',
     password: ''
 });
 
-// Estado de errores
 const errors = reactive({
     email: null,
     password: null
 });
 
-// Estado de carga y mensajes
 const loading = ref(false);
 const errorMsg = ref('');
 
-// Computar validez del formulario
 const isValid = computed(() => {
     return !errors.email &&
         !errors.password &&
@@ -58,18 +54,14 @@ const isValid = computed(() => {
         form.password;
 });
 
-// Autocompletar email si viene del registro
 onMounted(() => {
     const lastEmail = sessionStorage.getItem('lastRegisteredEmail');
     if (lastEmail) {
         form.email = lastEmail;
-        // Limpiar después de usarlo
         sessionStorage.removeItem('lastRegisteredEmail');
     }
 
-    // Verificar si hay un hash en la URL (redirección de verificación de email o recuperación)
     if (route.hash) {
-        // Para recuperación de contraseña
         if (route.hash.includes('type=recovery')) {
             const emailMatch = route.hash.match(/email=([^&]*)/);
             if (emailMatch && emailMatch[1]) {
@@ -84,7 +76,6 @@ onMounted(() => {
             });
         }
 
-        // Para confirmación de email
         if (route.hash.includes('type=signup') || route.hash.includes('type=email_change')) {
             toast.add({
                 severity: 'success',
@@ -93,7 +84,6 @@ onMounted(() => {
                 life: 5000
             });
 
-            // También podrías intentar extraer el email si está disponible
             const emailMatch = route.hash.match(/email=([^&]*)/);
             if (emailMatch && emailMatch[1]) {
                 form.email = decodeURIComponent(emailMatch[1]);
@@ -102,7 +92,6 @@ onMounted(() => {
     }
 });
 
-// Validación de email
 const validateEmail = () => {
     if (!form.email) {
         errors.email = 'El email es requerido';
@@ -112,7 +101,6 @@ const validateEmail = () => {
     return true;
 };
 
-// Validación de contraseña
 const validatePassword = () => {
     if (!form.password) {
         errors.password = 'La contraseña es requerida';
@@ -122,7 +110,6 @@ const validatePassword = () => {
     return true;
 };
 
-// Función de inicio de sesión
 const handleSignIn = async () => {
     loading.value = true;
     errorMsg.value = '';
@@ -136,7 +123,6 @@ const handleSignIn = async () => {
     }
 
     try {
-        // Guardar el email en localStorage para futuras sesiones
         localStorage.setItem('lastLoginEmail', form.email);
         errorMsg.value = '';
         const { error } = await client.auth.signInWithPassword({

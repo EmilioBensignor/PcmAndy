@@ -9,9 +9,6 @@
                     'bg-terciary': modelValue,
                     'bg-gray': !modelValue
                 }">
-                <!-- <span class="w-full text-center text-base text-black transition-colors duration-400">
-                    {{ modelValue ? dataOn : dataOff }}
-                </span> -->
             </div>
         </label>
     </div>

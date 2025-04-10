@@ -78,7 +78,6 @@ const emit = defineEmits(['submit']);
 const existingImages = ref([]);
 const categoriasStore = useCategoriasStore();
 
-// Seguimos el índice de la imagen destacada internamente
 const imagenDestacadaIndex = ref(0);
 
 // Cargar las categorías al montar el componente
@@ -87,7 +86,6 @@ onMounted(async () => {
         await categoriasStore.fetchCategorias();
     }
 
-    // Cargamos las imágenes existentes si estamos en modo edición
     if (props.isEditing && props.initialData.imagenes) {
         existingImages.value = Array.isArray(props.initialData.imagenes)
             ? props.initialData.imagenes
@@ -95,7 +93,6 @@ onMounted(async () => {
     }
 });
 
-// Crear un computed para acceder a las categorías
 const categorias = computed(() => categoriasStore.getCategorias);
 
 const form = reactive({
@@ -119,7 +116,6 @@ const errors = reactive({
     imagenes: ''
 });
 
-// Métodos para actualizar el índice de la imagen destacada y el orden
 const updateImagenDestacada = (index) => {
     imagenDestacadaIndex.value = index;
 };
@@ -140,13 +136,11 @@ const {
     clearErrors
 } = useObraValidation(form, errors, props.isEditing);
 
-// Función para manejar el envío del formulario
 const handleSubmit = () => {
     if (!validateForm()) {
         return;
     }
 
-    // Preparamos los datos para enviar al componente padre
     const formData = {
         titulo: form.titulo,
         descripcion: form.descripcion,
@@ -161,7 +155,6 @@ const handleSubmit = () => {
         existingImages: existingImages.value
     };
 
-    // Emitimos el evento con los datos del formulario
     emit('submit', formData);
 };
 </script>
