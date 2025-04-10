@@ -35,7 +35,8 @@
                     {{ errors.categoria }}
                 </div>
             </div>
-            <FormSwitch id="destacado" label="Destacado" v-model="form.destacado" data-on="Activado" data-off="Desactivado" />
+            <FormSwitch id="destacado" label="Destacado" v-model="form.destacado" data-on="Activado"
+                data-off="Desactivado" />
         </FormFieldsContainer>
 
         <div class="w-full flex flex-wrap justify-center gap-4">
@@ -80,7 +81,6 @@ const categoriasStore = useCategoriasStore();
 
 const imagenDestacadaIndex = ref(0);
 
-// Cargar las categorías al montar el componente
 onMounted(async () => {
     if (categoriasStore.categorias.length === 0) {
         await categoriasStore.fetchCategorias();
@@ -137,8 +137,22 @@ const {
 } = useObraValidation(form, errors, props.isEditing);
 
 const handleSubmit = () => {
-    if (!validateForm()) {
-        return;
+    if (props.isEditing && existingImages.value && existingImages.value.length > 0) {
+        const isValid =
+            validateTitulo() &&
+            validateDescripcion() &&
+            validateAnio() &&
+            validateAncho() &&
+            validateAlto() &&
+            validateCategoria();
+
+        if (!isValid) {
+            return;
+        }
+    } else {
+        if (!validateForm()) {
+            return;
+        }
     }
 
     const formData = {

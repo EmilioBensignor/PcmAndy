@@ -1,69 +1,31 @@
-export const useObraValidation = (formData, errors, isEditing = false) => {
-    const clearErrors = () => {
-        Object.keys(errors).forEach(key => {
-            errors[key] = '';
-        });
-    };
-
+export const useObraValidation = (form, errors, isEditing = false) => {
     const validateTitulo = () => {
-        if (!formData.titulo) {
+        if (!form.titulo.trim()) {
             errors.titulo = 'El título es obligatorio';
             return false;
-        } else if (formData.titulo.length < 3) {
-            errors.titulo = 'El título debe tener al menos 3 caracteres';
-            return false;
-        } else if (formData.titulo.length > 100) {
-            errors.titulo = 'El título no puede exceder los 100 caracteres';
-            return false;
         }
-
         errors.titulo = '';
         return true;
     };
 
-    const validateImagenes = () => {
-        if (isEditing && formData.existingImages && formData.existingImages.length > 0) {
-            errors.imagenes = '';
-            return true;
-        }
-
-        if (!formData.imagenes || formData.imagenes.length === 0) {
-            errors.imagenes = 'Debes subir al menos una imagen';
-            return false;
-        }
-
-        errors.imagenes = '';
-        return true;
-    };
-
     const validateDescripcion = () => {
-        if (!formData.descripcion) {
+        if (!form.descripcion.trim()) {
             errors.descripcion = 'La descripción es obligatoria';
             return false;
-        } else if (formData.descripcion.length < 10) {
-            errors.descripcion = 'La descripción debe tener al menos 10 caracteres';
-            return false;
-        } else if (formData.descripcion.length > 500) {
-            errors.descripcion = 'La descripción no puede exceder los 500 caracteres';
-            return false;
         }
-
         errors.descripcion = '';
         return true;
     };
 
     const validateAnio = () => {
-        const currentYear = new Date().getFullYear();
-        const yearPattern = /^\d{4}$/;
-
-        if (!formData.anio) {
+        if (!form.anio) {
             errors.anio = 'El año es obligatorio';
             return false;
-        } else if (!yearPattern.test(formData.anio)) {
-            errors.anio = 'El año debe tener 4 dígitos';
-            return false;
-        } else if (parseInt(formData.anio) < 1800 || parseInt(formData.anio) > currentYear + 1) {
-            errors.anio = `El año debe estar entre 1800 y ${currentYear + 1}`;
+        }
+
+        const anioNum = parseInt(form.anio);
+        if (isNaN(anioNum) || anioNum < 1800 || anioNum > 2100) {
+            errors.anio = 'Ingrese un año válido entre 1800 y 2100';
             return false;
         }
 
@@ -72,14 +34,14 @@ export const useObraValidation = (formData, errors, isEditing = false) => {
     };
 
     const validateAncho = () => {
-        if (!formData.ancho) {
+        if (!form.ancho) {
             errors.ancho = 'El ancho es obligatorio';
             return false;
-        } else if (isNaN(formData.ancho) || parseFloat(formData.ancho) <= 0) {
-            errors.ancho = 'El ancho debe ser un número positivo';
-            return false;
-        } else if (parseFloat(formData.ancho) > 1000) {
-            errors.ancho = 'El ancho no puede ser mayor a 1000 cm';
+        }
+
+        const anchoNum = parseFloat(form.ancho);
+        if (isNaN(anchoNum) || anchoNum <= 0 || anchoNum > 1000) {
+            errors.ancho = 'Ingrese un ancho válido entre 0 y 1000';
             return false;
         }
 
@@ -88,14 +50,14 @@ export const useObraValidation = (formData, errors, isEditing = false) => {
     };
 
     const validateAlto = () => {
-        if (!formData.alto) {
+        if (!form.alto) {
             errors.alto = 'El alto es obligatorio';
             return false;
-        } else if (isNaN(formData.alto) || parseFloat(formData.alto) <= 0) {
-            errors.alto = 'El alto debe ser un número positivo';
-            return false;
-        } else if (parseFloat(formData.alto) > 1000) {
-            errors.alto = 'El alto no puede ser mayor a 1000 cm';
+        }
+
+        const altoNum = parseFloat(form.alto);
+        if (isNaN(altoNum) || altoNum <= 0 || altoNum > 1000) {
+            errors.alto = 'Ingrese un alto válido entre 0 y 1000';
             return false;
         }
 
@@ -104,23 +66,47 @@ export const useObraValidation = (formData, errors, isEditing = false) => {
     };
 
     const validateCategoria = () => {
-        if (!formData.categoria) {
+        if (!form.categoria) {
             errors.categoria = 'La categoría es obligatoria';
             return false;
         }
-
         errors.categoria = '';
         return true;
     };
 
-    const validateForm = () => {
+    const validateImagenes = (existingImages = []) => {
+        if (isEditing && existingImages && existingImages.length > 0) {
+            errors.imagenes = '';
+            return true;
+        }
+
+        if (!form.imagenes || form.imagenes.length === 0) {
+            errors.imagenes = 'Debes subir al menos una imagen';
+            return false;
+        }
+
+        errors.imagenes = '';
+        return true;
+    };
+
+    const clearErrors = () => {
+        errors.titulo = '';
+        errors.descripcion = '';
+        errors.anio = '';
+        errors.ancho = '';
+        errors.alto = '';
+        errors.categoria = '';
+        errors.imagenes = '';
+    };
+
+    const validateForm = (existingImages = []) => {
         const validTitulo = validateTitulo();
         const validDescripcion = validateDescripcion();
         const validAnio = validateAnio();
         const validAncho = validateAncho();
         const validAlto = validateAlto();
         const validCategoria = validateCategoria();
-        const validImagenes = validateImagenes();
+        const validImagenes = validateImagenes(existingImages);
 
         return validTitulo && validDescripcion && validAnio &&
             validAncho && validAlto && validCategoria && validImagenes;

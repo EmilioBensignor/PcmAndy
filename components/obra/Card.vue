@@ -6,7 +6,7 @@
         <div class="flex flex-col gap-3 p-5">
             <p class="text-white font-light">{{ obra.titulo }}</p>
             <div class="flex gap-3">
-                <img :src="obra.imagen_url || '/images/placeholder.png'" :alt="obra.titulo"
+                <img :src="obra.imagen_url" :alt="obra.titulo"
                     class="w-[50%] object-cover">
                 <div class="flex flex-col gap-3">
                     <p class="text-white font-light">Año: {{ obra.anio }}</p>

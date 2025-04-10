@@ -5,7 +5,7 @@
 
 <script setup>
 import { useObrasStore } from '~/store/obras';
-import { imageOptimization } from '~/services/imageOptimization';
+import { useObraService } from '~/composables/useObraService';
 import { ROUTE_NAMES } from '~/constants/ROUTE_NAMES';
 
 const obrasStore = useObrasStore();
@@ -13,6 +13,7 @@ const { $toast } = useNuxtApp();
 const router = useRouter();
 
 const isLoading = ref(false);
+const obraService = useObraService();
 
 const handleSubmit = async (formData) => {
     isLoading.value = true;
@@ -20,15 +21,7 @@ const handleSubmit = async (formData) => {
     try {
         $toast.info('Guardando la obra...');
 
-        const obraData = {
-            titulo: formData.titulo,
-            descripcion: formData.descripcion,
-            anio: parseInt(formData.anio),
-            ancho: parseFloat(formData.ancho),
-            alto: parseFloat(formData.alto),
-            categoria_id: formData.categoria_id,
-            destacado: formData.destacado
-        };
+        const obraData = obraService.prepareObraData(formData);
 
         const nuevaObra = await obrasStore.createObra(obraData);
 
@@ -37,30 +30,14 @@ const handleSubmit = async (formData) => {
         }
 
         if (formData.imagenes && formData.imagenes.length > 0) {
-            const bucketName = 'obras-imagenes';
-
-            for (let i = 0; i < formData.imagenes.length; i++) {
-                const imagen = formData.imagenes[i];
-                try {
-                    const imageUrl = await imageOptimization.uploadImage(imagen, {
-                        bucket: bucketName,
-                        title: formData.titulo
-                    });
-
-                    if (imageUrl) {
-                        await obrasStore.createObraImagen({
-                            obra_id: nuevaObra.id,
-                            url: imageUrl,
-                            posicion: i,
-                            es_principal: i === formData.imagen_destacada_index
-                        });
-                    }
-                } catch (error) {
-                    console.error('Error al subir imagen:', error);
-                    $toast.error(`Error al subir una imagen: ${error.message || 'Error desconocido'}`);
-                }
-            }
-        } else if (!formData.existingImages?.length) {
+            await obraService.uploadImages(
+                formData.imagenes,
+                formData.titulo,
+                nuevaObra.id,
+                0,
+                formData.imagen_destacada_index
+            );
+        } else {
             $toast.warn('No se subieron imágenes para esta obra');
         }
 

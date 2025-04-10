@@ -1,11 +1,14 @@
 <template>
     <DefaultTitleH1>Editar Obra</DefaultTitleH1>
-    <FormObra :initial-data="obraData" :is-editing="true" :is-loading="isSubmitting" @submit="handleSubmit" />
+    <div v-if="isLoading" class="flex justify-center items-center h-40">
+        <p>Cargando información de la obra...</p>
+    </div>
+    <FormObra v-else :initial-data="obraData" :is-editing="true" :is-loading="isSubmitting" @submit="handleSubmit" />
 </template>
 
 <script setup>
 import { useObrasStore } from '~/store/obras';
-import { imageOptimization } from '~/services/imageOptimization';
+import { useObraService } from '~/composables/useObraService';
 import { ROUTE_NAMES } from '~/constants/ROUTE_NAMES';
 
 const route = useRoute();
@@ -17,11 +20,24 @@ const obraId = computed(() => route.params.id);
 const obraData = ref({});
 const isLoading = ref(true);
 const isSubmitting = ref(false);
+const obraService = useObraService();
 
 onMounted(async () => {
     try {
         const obra = await obrasStore.fetchObraById(obraId.value);
-        obraData.value = obra;
+        obraData.value = {
+            id: obra.id,
+            titulo: obra.titulo || '',
+            descripcion: obra.descripcion || '',
+            anio: obra.anio || '',
+            ancho: obra.ancho || '',
+            alto: obra.alto || '',
+            categoria_id: obra.categoria_id || null,
+            categorias: obra.categorias || null,
+            destacado: obra.destacado || false,
+            imagenes: obra.imagenes || [],
+            imagen_url: obra.imagen_url || null
+        };
     } catch (error) {
         console.error('Error al cargar la obra:', error);
         $toast.error('No se pudo cargar la información de la obra');
@@ -46,96 +62,31 @@ const handleSubmit = async (formData) => {
             });
         }
 
-        if (formData.imagenes && formData.imagenes.length > 0) {
-            const bucketName = 'obras-imagenes';
-
-            for (let i = 0; i < formData.imagenes.length; i++) {
-                const imagen = formData.imagenes[i];
-                try {
-                    const imageUrl = await imageOptimization.uploadImage(imagen, {
-                        bucket: bucketName,
-                        title: formData.titulo
-                    });
-
-                    if (imageUrl) {
-                        const isDestacada = formData.imagen_destacada_index === (formData.existingImages?.length || 0) + i;
-
-                        await obrasStore.createObraImagen({
-                            obra_id: obraId.value,
-                            url: imageUrl,
-                            posicion: (formData.existingImages?.length || 0) + i,
-                            es_principal: isDestacada
-                        });
-                    }
-                } catch (error) {
-                    console.error('Error al subir imagen:', error);
-                    $toast.error(`Error al subir una imagen: ${error.message || 'Error desconocido'}`);
-                }
-            }
-        }
-
-        const obraUpdateData = {
-            titulo: formData.titulo,
-            descripcion: formData.descripcion,
-            anio: parseInt(formData.anio),
-            ancho: parseFloat(formData.ancho),
-            alto: parseFloat(formData.alto),
-            categoria_id: formData.categoria_id,
-            destacado: formData.destacado
-        };
-
+        const obraUpdateData = obraService.prepareObraData(formData);
         await obrasStore.updateObra(obraId.value, obraUpdateData);
 
-        if (formData.existingImages && formData.existingImages.length > 0 &&
-            formData.imagen_destacada_index < formData.existingImages.length) {
-
-            try {
-                const { data: imagenes } = await useSupabaseClient()
-                    .from('obras_imagenes')
-                    .select('id, url, posicion')
-                    .eq('obra_id', obraId.value)
-                    .order('posicion', { ascending: true });
-
-                if (imagenes && imagenes.length > 0) {
-                    await useSupabaseClient()
-                        .from('obras_imagenes')
-                        .update({ es_principal: false })
-                        .eq('obra_id', obraId.value);
-
-                    const destacadaUrl = formData.existingImages[formData.imagen_destacada_index];
-                    const imagenDestacada = imagenes.find(img => img.url === destacadaUrl);
-
-                    if (imagenDestacada) {
-                        await useSupabaseClient()
-                            .from('obras_imagenes')
-                            .update({ es_principal: true })
-                            .eq('id', imagenDestacada.id);
-                    }
-                }
-            } catch (error) {
-                console.error('Error al actualizar imagen destacada:', error);
-            }
+        if (formData.imagenes && formData.imagenes.length > 0) {
+            await obraService.uploadImages(
+                formData.imagenes,
+                formData.titulo,
+                obraId.value,
+                formData.existingImages?.length || 0,
+                formData.imagen_destacada_index
+            );
         }
 
-        for (const imageUrl of imagenesToDelete) {
-            try {
-                const { data: imagenData } = await useSupabaseClient()
-                    .from('obras_imagenes')
-                    .select('id')
-                    .eq('url', imageUrl)
-                    .eq('obra_id', obraId.value)
-                    .single();
+        await obraService.updateFeaturedImage(
+            obraId.value,
+            formData.existingImages,
+            formData.imagen_destacada_index
+        );
 
-                if (imagenData) {
-                    await obrasStore.deleteObraImagen(imagenData.id);
-                }
-            } catch (error) {
-                console.error(`Error al eliminar imagen ${imageUrl}:`, error);
-            }
-        }
+        await obraService.deleteImages(obraId.value, imagenesToDelete);
+
+        await obraService.updateImagesOrder(obraId.value, formData.existingImages);
 
         $toast.success('Obra actualizada correctamente');
-        router.push({ name: ROUTE_NAMES.OBRAS });
+        router.push(ROUTE_NAMES.WORKS);
 
     } catch (error) {
         console.error('Error al actualizar la obra:', error);
