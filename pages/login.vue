@@ -7,11 +7,11 @@
             <FormPasswordField id="password" label="Contraseña" placeholder="********" autocomplete="current-password"
                 v-model="form.password" :error="errors.password" @input="validatePassword" type="password" />
         </FormFieldsContainer>
-        <NuxtLink :to="ROUTE_NAMES.FORGOT_PASSWORD" class="text-sm text-black underline">
+        <NuxtLink :to="ROUTE_NAMES.FORGOT_PASSWORD" class="text-sm lg:text-base text-black underline">
             ¿Olvidaste tu contraseña?
         </NuxtLink>
-        <p class="text-sm">Si todavía no tienes una cuenta, <NuxtLink :to="ROUTE_NAMES.REGISTER"
-                class="text-sm text-black underline">
+        <p class="text-sm lg:text-base">Si todavía no tienes una cuenta, <NuxtLink :to="ROUTE_NAMES.REGISTER"
+                class="text-sm lg:text-base text-black underline">
                 registrate</NuxtLink>
         </p>
         <DefaultError v-if="errorMsg">

@@ -12,8 +12,8 @@
                 autocomplete="new-password" v-model="form.passwordConfirm" :error="errors.passwordConfirm"
                 @input="validatePasswordConfirm" type="password" />
         </FormFieldsContainer>
-        <p class="text-sm">Si ya tienes una cuenta, <NuxtLink :to="ROUTE_NAMES.LOGIN"
-                class="text-sm text-black underline">
+        <p class="text-sm lg:text-base">Si ya tienes una cuenta, <NuxtLink :to="ROUTE_NAMES.LOGIN"
+                class="text-sm lg:text-base text-black underline">
                 inicia sesión</NuxtLink>
         </p>
         <DefaultError v-if="errorMsg">

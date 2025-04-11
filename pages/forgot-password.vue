@@ -1,24 +1,29 @@
 <template>
-    <NuxtLink :to="ROUTE_NAMES.LOGIN" class="flex items-center gap-2 self-start text-black text-xs no-underline">
-        <Icon name="tabler:arrow-left" />
-        Volver a Iniciar sesión
-    </NuxtLink>
-    <DefaultTitleH1>Restablecer contraseña</DefaultTitleH1>
-    <p class="max-w-[480px]">
-        Ingrese el correo electrónico de su cuenta para poder reestablecer su
-        contraseña.
-    </p>
-    <FormLayout @submit.prevent="handleForgotPassword">
-        <FormFieldsContainer>
-            <FormEmailField id="email" label="Correo electrónico" placeholder="stevejobs@gmail.com" autocomplete="email"
-                v-model="form.email" :error="errors.email" @input="validateEmail" />
-        </FormFieldsContainer>
-        <DefaultError v-if="errorMsg">
-            {{ errorMsg }}
-        </DefaultError>
-        <Button :loading="loading" :class="{ active: isValid }" class="primaryButton loadingButton"
-        :label="loading ? '' : 'Restablecer contraseña'" type="submit" />
-    </FormLayout>
+    <div class="w-full max-w-[800px] flex flex-col items-center gap-6 lg:gap-9">
+        <NuxtLink :to="ROUTE_NAMES.LOGIN"
+            class="flex items-center gap-2 self-start text-black text-sm lg:text-base no-underline">
+            <Icon name="tabler:arrow-left" size="1.25rem" />
+            Volver a Iniciar sesión
+        </NuxtLink>
+        <DefaultTitleH1>Restablecer contraseña</DefaultTitleH1>
+        <div class="flex flex-col gap-4 lg:gap-6">
+            <p class="max-w-[480px] lg:text-xl">
+                Ingrese el correo electrónico de su cuenta para poder reestablecer su
+                contraseña.
+            </p>
+            <FormLayout @submit.prevent="handleForgotPassword">
+                <FormFieldsContainer>
+                    <FormEmailField id="email" label="Correo electrónico" placeholder="stevejobs@gmail.com"
+                        autocomplete="email" v-model="form.email" :error="errors.email" @input="validateEmail" />
+                </FormFieldsContainer>
+                <DefaultError v-if="errorMsg">
+                    {{ errorMsg }}
+                </DefaultError>
+                <Button :loading="loading" :class="{ active: isValid }" class="primaryButton loadingButton"
+                    :label="loading ? '' : 'Restablecer contraseña'" type="submit" />
+            </FormLayout>
+        </div>
+    </div>
 </template>
 
 <script setup>

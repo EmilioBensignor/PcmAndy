@@ -1,26 +1,26 @@
 <template>
-    <header class="flex flex-col justify-center items-center relative bg-primary py-6 px-5">
-        <button class="flex flex-col justify-center items-center absolute left-5" @click="toggleDrawer" aria-label="Open or close menu">
+    <header class="flex flex-col justify-center items-center relative bg-primary py-6 px-5 lg:py-8 lg:px-24">
+        <button class="flex flex-col justify-center items-center absolute left-5 lg:left-24" @click="toggleDrawer" aria-label="Open or close menu">
             <Icon size="1.5rem" name="tabler:menu-2" class="text-black" />
         </button>
         <NuxtLink :to="routes.HOME">
-            <NuxtImg src="/images/Logo-Peripeteia-Blanco.svg" alt="Logo Andy Loisch" class="h-8" />
+            <NuxtImg src="/images/Logo-Peripeteia-Blanco.svg" alt="Logo Andy Loisch" class="h-8 lg:h-11" />
         </NuxtLink>
         <Drawer :visible="drawerMenu" :modal="true" :dismissable="true" :closeOnEscape="true" @hide="closeDrawer">
             <template #header>
-                <p>Andy Loisch</p>
+                <p class="lg:text-xl">Andy Loisch</p>
                 <button @click="closeDrawer" class="closeButton flex flex-col justify-center items-center">
-                    <Icon name="tabler:plus" size="1.5rem" weight="100" class="text-black rotate-45" />
+                    <Icon name="tabler:plus" size="1.75rem" weight="100" class="text-black rotate-45" />
                 </button>
             </template>
             <nav class="flex flex-col">
-                <NuxtLink :to="link.route" v-for="(link, index) in menu" :key="index" class="flex items-center gap-3 text-black text-sm p-3">
-                    <Icon :name="`tabler:${link.icon}`" />
+                <NuxtLink :to="link.route" v-for="(link, index) in menu" :key="index" class="flex items-center gap-3 text-black text-sm lg:text-base font-light p-3 lg:py-4">
+                    <Icon :name="`tabler:${link.icon}`" size="1.125rem" />
                     {{ link.label }}
                 </NuxtLink>
             </nav>
-            <button @click="signOut()" class="w-full flex items-center gap-3 text-sm font-light text-black p-3">
-                <Icon :name="`tabler:logout`" class="text-black" />
+            <button @click="signOut()" class="w-full flex items-center gap-3 text-sm lg:text-base font-light text-black p-3">
+                <Icon :name="`tabler:logout`" size="1.125rem" class="text-black" />
                 Cerrar sesión
             </button>
         </Drawer>
