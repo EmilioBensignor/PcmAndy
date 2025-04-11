@@ -21,14 +21,12 @@ const handleSubmit = async (formData) => {
     try {
         $toast.info('Guardando la inspiración...');
 
-        // Primero creamos el registro de inspiración (vacío)
         const nuevaInspiracion = await inspiracionesStore.createInspiracion({});
 
         if (!nuevaInspiracion || !nuevaInspiracion.id) {
             throw new Error('No se pudo crear la inspiración');
         }
 
-        // Subir la imagen y asignarla directamente a la inspiración
         if (formData.imagen) {
             await inspiracionService.uploadImage(
                 formData.imagen,
@@ -38,7 +36,6 @@ const handleSubmit = async (formData) => {
             $toast.warn('No se subió imagen para esta inspiración');
         }
 
-        // Guardar la relación con los colores
         if (formData.coloresIds && formData.coloresIds.length > 0) {
             await inspiracionService.saveColores(nuevaInspiracion.id, formData.coloresIds);
         } else {

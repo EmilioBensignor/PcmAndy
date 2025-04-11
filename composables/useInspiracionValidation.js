@@ -1,12 +1,10 @@
 export const useInspiracionValidation = (form, errors, isEditing = false) => {
     const validateImagen = () => {
-        // Si estamos editando y ya hay una imagen existente, no es necesario validar
         if (isEditing && form.imagen_url) {
             errors.imagen = '';
             return true;
         }
 
-        // Si no estamos editando o no hay imagen existente, debe haber una imagen nueva
         if (!form.imagen) {
             errors.imagen = 'Debes subir una imagen';
             return false;
@@ -17,7 +15,6 @@ export const useInspiracionValidation = (form, errors, isEditing = false) => {
     };
 
     const validateColores = () => {
-        // Validar que se haya seleccionado al menos un color
         if (!form.colores || form.colores.length === 0) {
             errors.colores = 'Debes seleccionar al menos un color';
             return false;

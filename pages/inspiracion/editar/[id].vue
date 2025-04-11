@@ -27,17 +27,13 @@ const inspiracionService = useInspiracionService();
 
 onMounted(async () => {
     try {
-        // Cargar la información de la inspiración
         const inspiracion = await inspiracionesStore.fetchInspiracionById(inspiracionId.value);
 
-        // Importante: asegurarnos de que la URL de imagen sea correcta
         inspiracionData.value = {
             id: inspiracion.id,
             imagen_url: inspiracion.imagen_url || null
         };
 
-        // Importante: Asegúrate de esperar a que se carguen los colores relacionados
-        // ya que el formulario los necesita al inicializarse
         await inspiracionService.getInspiracionColores(inspiracionId.value);
     } catch (error) {
         console.error('Error al cargar la inspiración:', error);
@@ -54,21 +50,17 @@ const handleSubmit = async (formData) => {
     try {
         $toast.info('Actualizando la inspiración...');
 
-        // Manejar la imagen
         if (formData.imagen) {
-            // Si hay una imagen nueva, la eliminamos si existía previamente
             if (inspiracionData.value.imagen_url) {
                 await inspiracionService.deleteImage(inspiracionId.value, inspiracionData.value.imagen_url);
             }
 
-            // Subimos la nueva imagen
             await inspiracionService.uploadImage(
                 formData.imagen,
                 inspiracionId.value
             );
         }
 
-        // Actualizar la relación con los colores
         await inspiracionService.saveColores(inspiracionId.value, formData.coloresIds);
 
         $toast.success('Inspiración actualizada correctamente');

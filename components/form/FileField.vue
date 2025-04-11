@@ -1,12 +1,11 @@
-// FormFileField adaptado a partir de tu código original
 <template>
     <div class="w-full flex flex-col gap-2">
-        <p class="font-light">{{ label }} <span v-if="required" class="text-red-500">*</span></p>
+        <p class="font-light">{{ label }}</p>
 
         <!-- Imagen existente -->
-        <div v-if="existingImages && existingImages.length > 0 && !modelValue" class="w-full mt-2">
-            <div class="relative border rounded-md p-2">
-                <img :src="existingImages[0]" alt="Imagen existente" class="w-full h-40 object-contain" />
+        <div v-if="existingImages && existingImages.length > 0 && !modelValue" class="mt-2">
+            <div class="flex flex-col relative border rounded-md p-2">
+                <img :src="existingImages[0]" alt="Imagen existente" class="h-40 object-contain" />
                 <div class="flex justify-end mt-2">
                     <button type="button" class="text-sm bg-terciary text-white py-1 px-2 rounded"
                         @click="showFileUpload = true" v-if="!showFileUpload">
@@ -22,9 +21,9 @@
             :required="required && !existingImages.length" />
 
         <!-- Vista previa de nueva imagen -->
-        <div v-if="modelValue && previewUrl" class="w-full mt-2">
-            <div class="relative border rounded-md p-2">
-                <img :src="previewUrl" alt="Imagen seleccionada" class="w-full h-40 object-contain" />
+        <div v-if="modelValue && previewUrl" class="mt-2">
+            <div class="flex flex-col relative border rounded-md p-2">
+                <img :src="previewUrl" alt="Imagen seleccionada" class="h-40 object-contain" />
                 <div class="flex justify-end mt-2">
                     <button type="button" class="text-sm bg-gray text-white py-1 px-2 rounded" @click="removeFile">
                         Eliminar
@@ -33,7 +32,6 @@
             </div>
         </div>
 
-        <!-- Mensaje de error -->
         <DefaultError v-if="error">
             {{ error }}
         </DefaultError>
@@ -41,9 +39,6 @@
 </template>
 
 <script setup>
-// Importaciones y setup
-import { ref, watch, onBeforeUnmount, defineProps, defineEmits } from 'vue';
-
 const props = defineProps({
     id: {
         type: String,
@@ -85,11 +80,9 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'select']);
 
-// Estado
 const showFileUpload = ref(false);
 const previewUrl = ref(null);
 
-// Observar cambios en el archivo seleccionado
 watch(() => props.modelValue, (newFile) => {
     if (newFile) {
         createPreviewUrl(newFile);
@@ -101,7 +94,6 @@ watch(() => props.modelValue, (newFile) => {
     }
 }, { immediate: true });
 
-// Manejadores de eventos
 const onSelect = (event) => {
     const file = event.files[0];
     emit('update:modelValue', file);
@@ -123,7 +115,6 @@ const createPreviewUrl = (file) => {
     }
 };
 
-// Limpiar recursos al desmontar
 onBeforeUnmount(() => {
     if (previewUrl.value) {
         URL.revokeObjectURL(previewUrl.value);

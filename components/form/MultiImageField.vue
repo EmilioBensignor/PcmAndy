@@ -4,10 +4,10 @@
 
         <!-- Imágenes existentes -->
         <div v-if="existingImages && existingImages.length > 0"
-            class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
             <div v-for="(img, index) in existingImages" :key="`existing-${index}`"
-                class="relative border rounded-md p-2">
-                <img :src="img" alt="Imagen existente" class="w-full h-40 object-contain" />
+                class="flex flex-col relative border rounded-md p-2">
+                <img :src="img" alt="Imagen existente" class="h-40 object-contain" />
                 <div class="flex justify-between mt-2">
                     <button type="button" 
                         :class="`text-sm ${index === imagenPrincipalIndex ? 'bg-secondary' : 'bg-terciary'} text-white py-1 px-2 rounded`"
@@ -28,9 +28,9 @@
             @remove="onRemove" />
 
         <!-- Previsualización de imágenes nuevas -->
-        <div v-if="previewUrls.length > 0" class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
-            <div v-for="(url, index) in previewUrls" :key="`preview-${index}`" class="relative border rounded-md p-2">
-                <img :src="url" alt="Vista previa" class="w-full h-40 object-contain" />
+        <div v-if="previewUrls.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+            <div v-for="(url, index) in previewUrls" :key="`preview-${index}`" class="flex flex-col relative border rounded-md p-2">
+                <img :src="url" alt="Vista previa" class="h-40 object-contain" />
                 <div class="flex justify-between mt-2">
                     <button type="button" 
                         :class="`text-sm ${index === previewDestacadaIndex ? 'bg-secondary' : 'bg-terciary'} text-white py-1 px-2 rounded`"

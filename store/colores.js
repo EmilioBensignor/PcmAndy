@@ -10,7 +10,6 @@ export const useColoresStore = defineStore('colores', {
 
     getters: {
         getColores: (state) => state.colores,
-        // Getter útil para selector múltiple de colores (ordenado por posición)
         getColoresAsOptions: (state) => state.colores.map(color => ({
             value: color.id,
             label: color.nombre,
@@ -28,7 +27,7 @@ export const useColoresStore = defineStore('colores', {
                 const { data, error } = await useSupabaseClient()
                     .from('colores')
                     .select('*')
-                    .order('posicion'); // Ordenamos por posición en lugar de nombre
+                    .order('posicion');
 
                 if (error) throw error;
 
@@ -71,9 +70,7 @@ export const useColoresStore = defineStore('colores', {
             this.error = null;
 
             try {
-                // Asegurar que el nuevo color tenga una posición
                 if (!color.posicion && color.posicion !== 0) {
-                    // Asignar una posición alta por defecto (aparecerá al final)
                     color.posicion = 99;
                 }
 
@@ -85,7 +82,6 @@ export const useColoresStore = defineStore('colores', {
 
                 if (error) throw error;
 
-                // Añadimos el nuevo color al state y lo ordenamos por posición
                 this.colores = [...this.colores, data].sort((a, b) =>
                     a.posicion - b.posicion
                 );
@@ -114,7 +110,6 @@ export const useColoresStore = defineStore('colores', {
 
                 if (error) throw error;
 
-                // Actualizamos el color en el state y reordenamos
                 const index = this.colores.findIndex(color => color.id === id);
                 if (index !== -1) {
                     this.colores[index] = data;
@@ -156,8 +151,6 @@ export const useColoresStore = defineStore('colores', {
             }
         },
 
-        // Métodos para manejar la relación muchos a muchos con inspiraciones
-
         async getColoresByInspiracionId(inspiracionId) {
             this.isLoading = true;
             this.error = null;
@@ -170,11 +163,10 @@ export const useColoresStore = defineStore('colores', {
                         colores:color_id(id, nombre, codigo_hex, posicion)
                     `)
                     .eq('inspiracion_id', inspiracionId)
-                    .order('colores(posicion)'); // Ordenar por posición
+                    .order('colores(posicion)');
 
                 if (error) throw error;
 
-                // Transformamos la respuesta para obtener solo los datos de colores
                 return data.map(item => item.colores);
             } catch (error) {
                 console.error(`Error al obtener colores de la inspiración ${inspiracionId}:`, error);
@@ -192,7 +184,6 @@ export const useColoresStore = defineStore('colores', {
             try {
                 const supabase = useSupabaseClient();
 
-                // Primero eliminamos todas las relaciones existentes para esta inspiración
                 const { error: deleteError } = await supabase
                     .from('inspiraciones_colores')
                     .delete()
@@ -200,16 +191,13 @@ export const useColoresStore = defineStore('colores', {
 
                 if (deleteError) throw deleteError;
 
-                // Si no hay colores que agregar, terminamos aquí
                 if (!coloresIds || coloresIds.length === 0) return { success: true };
 
-                // Preparamos los registros para insertar
                 const registrosParaInsertar = coloresIds.map(colorId => ({
                     inspiracion_id: inspiracionId,
                     color_id: colorId
                 }));
 
-                // Insertamos las nuevas relaciones
                 const { data, error } = await supabase
                     .from('inspiraciones_colores')
                     .insert(registrosParaInsertar)
@@ -242,7 +230,6 @@ export const useColoresStore = defineStore('colores', {
                     table: 'colores'
                 }, (payload) => {
                     if (payload.eventType === 'INSERT') {
-                        // Añadimos el nuevo color y ordenamos la lista por posición
                         this.colores = [...this.colores, payload.new].sort((a, b) =>
                             a.posicion - b.posicion
                         );
@@ -250,7 +237,6 @@ export const useColoresStore = defineStore('colores', {
                         const index = this.colores.findIndex(color => color.id === payload.new.id);
                         if (index !== -1) {
                             this.colores[index] = payload.new;
-                            // Reordenamos después de actualizar
                             this.colores = [...this.colores].sort((a, b) =>
                                 a.posicion - b.posicion
                             );

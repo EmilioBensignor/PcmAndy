@@ -16,12 +16,10 @@ export const useInspiracionService = () => {
 
             const imageUrl = await imageOptimization.uploadImage(imagen, {
                 bucket: bucketName,
-                // Generamos un nombre genérico para la imagen con el ID de la inspiración
                 title: `inspiracion-${inspiracionId}`
             });
 
             if (imageUrl) {
-                // Actualizar la URL de la imagen directamente en la inspiración
                 await inspiracionesStore.updateInspiracion(inspiracionId, {
                     imagen_url: imageUrl
                 });
@@ -41,10 +39,8 @@ export const useInspiracionService = () => {
         if (!imageUrl) return true;
 
         try {
-            // Primero eliminamos la imagen del almacenamiento
             await imageOptimization.deleteImage(imageUrl, 'inspiraciones-imagenes');
 
-            // Luego actualizamos la entrada en la base de datos
             await inspiracionesStore.updateInspiracion(inspiracionId, {
                 imagen_url: null
             });
@@ -81,7 +77,6 @@ export const useInspiracionService = () => {
         }
     };
 
-    // Método vacío ya que no hay campos adicionales para preparar
     const prepareInspiracionData = () => {
         return {};
     };
