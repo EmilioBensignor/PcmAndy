@@ -1,20 +1,29 @@
 <template>
     <div class="w-full flex flex-col gap-2">
         <p class="font-light">{{ label }}</p>
-        <div v-if="existingFileUrl && !modelValue" class="w-full flex items-center flex-wrap gap-8 mt-4">
-            <img :src="existingFileUrl" alt="Imagen existente" class="w-full mx-52 max-h-52 object-contain" />
-            <button type="button" class="primaryButton" @click="showFileUpload = true" v-if="!showFileUpload">
-                Cambiar imagen
-            </button>
+        <div v-if="existingFileUrl && !modelValue" class="w-full mt-2">
+            <div class="relative border rounded-md p-2">
+                <img :src="existingFileUrl" alt="Imagen existente" class="w-full h-40 object-contain" />
+                <div class="flex justify-end mt-2">
+                    <button type="button" class="text-sm bg-terciary text-white py-1 px-2 rounded" 
+                        @click="showFileUpload = true" v-if="!showFileUpload">
+                        Cambiar imagen
+                    </button>
+                </div>
+            </div>
         </div>
         <FileUpload v-if="!existingFileUrl || showFileUpload || modelValue" :id="id" mode="basic" :accept="accept"
             :maxFileSize="maxFileSize" :chooseLabel="placeholder" @select="onSelect" />
 
-        <div v-if="modelValue && previewUrl" class="w-full flex items-center flex-wrap gap-8 mt-4">
-            <img :src="previewUrl" alt="Imagen seleccionada" class="w-full mx-52 max-h-52 object-contain" />
-            <button type="button" class="primaryButton redButton" @click="removeFile">
-                Eliminar
-            </button>
+        <div v-if="modelValue && previewUrl" class="w-full mt-2">
+            <div class="relative border rounded-md p-2">
+                <img :src="previewUrl" alt="Imagen seleccionada" class="w-full h-40 object-contain" />
+                <div class="flex justify-end mt-2">
+                    <button type="button" class="text-sm bg-gray text-white py-1 px-2 rounded" @click="removeFile">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
         </div>
         <DefaultError v-if="error">
             {{ error }}

@@ -14,9 +14,8 @@
 
     <ClientOnly v-if="isLoading">
         <div class="w-full flex justify-center">
-            <div class="flex items-center gap-2">
-                <i class="pi pi-spinner pi-spin text-lg"></i>
-                <span>Cargando obras...</span>
+            <div class="flex items-center">
+                <p>Cargando obras...</p>
             </div>
         </div>
     </ClientOnly>

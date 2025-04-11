@@ -1,6 +1,6 @@
 <template>
     <DefaultTitleH1>Nueva Obra</DefaultTitleH1>
-    <FormObra :initial-data="{}" :is-loading="isLoading" @submit="handleSubmit" />
+    <ObraForm :initial-data="{}" :is-loading="isLoading" @submit="handleSubmit" />
 </template>
 
 <script setup>

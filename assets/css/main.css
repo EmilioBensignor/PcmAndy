@@ -157,14 +157,16 @@ form .p-password-toggle-mask-icon {
     color: #fff !important;
 }
 
-form .p-fileupload-header {
+form .p-fileupload-header,
+form .p-fileupload-basic {
     flex-direction: row;
     justify-content: flex-start;
     gap: 0.5rem;
     border: none;
 }
 
-form .p-fileupload-header .p-button {
+form .p-fileupload-header .p-button,
+form .p-fileupload-basic .p-button {
     width: max-content;
     gap: 0.625rem;
     background: #DDD !important;
@@ -174,21 +176,25 @@ form .p-fileupload-header .p-button {
     padding: 0.875rem;
 }
 
-form .p-fileupload-header .p-button:not(.p-button:first-of-type) {
+form .p-fileupload-header .p-button:not(.p-button:first-of-type),
+.p-fileupload-basic .p-button:not(.p-button:first-of-type) {
     display: none !important;
 }
 
-form .p-fileupload-header .p-button .p-icon {
+form .p-fileupload-header .p-button .p-icon,
+.p-fileupload-basic .p-button .p-icon {
     width: 0.75rem;
     height: 0.75rem;
 }
 
-form .p-fileupload-header .p-message-error {
+form .p-fileupload-header .p-message-error,
+.p-fileupload-basic {
     width: 100%;
     outline: none;
 }
 
-form .p-fileupload-header .p-message-text {
+form .p-fileupload-header .p-message-text,
+.p-fileupload-basic .p-message-text {
     color: #DE5E5E;
 }
 

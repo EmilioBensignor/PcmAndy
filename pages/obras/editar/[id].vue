@@ -3,7 +3,7 @@
     <div v-if="isLoading" class="flex justify-center items-center h-40">
         <p>Cargando información de la obra...</p>
     </div>
-    <FormObra v-else :initial-data="obraData" :is-editing="true" :is-loading="isSubmitting" @submit="handleSubmit" />
+    <ObraForm v-else :initial-data="obraData" :is-editing="true" :is-loading="isSubmitting" @submit="handleSubmit" />
 </template>
 
 <script setup>

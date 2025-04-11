@@ -60,7 +60,7 @@ export const useInspiracionesStore = defineStore('inspiraciones', {
             }
         },
 
-        async createInspiracion(inspiracion) {
+        async createInspiracion(inspiracion = {}) {
             this.isLoading = true;
             this.error = null;
 
@@ -118,6 +118,22 @@ export const useInspiracionesStore = defineStore('inspiraciones', {
             this.error = null;
 
             try {
+                // Primero obtenemos la inspiración para obtener la URL de la imagen
+                const { data: inspiracion, error: fetchError } = await useSupabaseClient()
+                    .from('inspiraciones')
+                    .select('imagen_url')
+                    .eq('id', id)
+                    .single();
+
+                if (fetchError) throw fetchError;
+
+                // Si la inspiración tiene una imagen, la eliminamos del storage
+                if (inspiracion && inspiracion.imagen_url) {
+                    const { imageOptimization } = await import('~/services/imageOptimization');
+                    await imageOptimization.deleteImage(inspiracion.imagen_url, 'inspiraciones-imagenes');
+                }
+
+                // Ahora eliminamos la inspiración
                 const { error } = await useSupabaseClient()
                     .from('inspiraciones')
                     .delete()
