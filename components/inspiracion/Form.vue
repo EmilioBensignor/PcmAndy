@@ -9,13 +9,12 @@
         <FormFieldsContainer>
             <div class="w-full flex flex-col gap-2">
                 <p class="font-light">Colores*</p>
-                <div class="flex flex-wrap gap-2 mt-2">
+                <div class="w-full max-w-[420px] flex flex-wrap gap-6 my-2">
                     <button v-for="color in ordenarColoresPorPosicion(coloresOptions)" :key="color.value" type="button"
-                        class="w-10 h-10 rounded transition-all border"
-                        :class="isColorSelected(color.value) ? 'border-2 border-gray-800 scale-110' : 'border-gray-200'"
-                        :style="{ backgroundColor: color.hex || '#000000' }" @click="toggleColor(color)"></button>
+                        class="w-10 h-10 rounded-md transition-all"
+                        :class="isColorSelected(color.value) ? 'rotate-45' : ''" :style="{ backgroundColor: color.hex }"
+                        @click="toggleColor(color)"></button>
                 </div>
-
                 <DefaultError v-if="errors.colores">{{ errors.colores }}</DefaultError>
             </div>
         </FormFieldsContainer>

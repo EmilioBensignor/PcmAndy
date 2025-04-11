@@ -37,6 +37,33 @@ export const useInspiracionesStore = defineStore('inspiraciones', {
             }
         },
 
+        async fetchInspiracionesPorColor(colorId) {
+            this.isLoading = true;
+            this.error = null;
+
+            try {
+                const { data, error } = await useSupabaseClient()
+                    .from('inspiraciones_colores')
+                    .select(`
+                        inspiracion_id,
+                        inspiraciones:inspiracion_id(*)
+                    `)
+                    .eq('color_id', colorId);
+
+                if (error) throw error;
+
+                const inspiracionesData = data.map(item => item.inspiraciones);
+                this.inspiraciones = inspiracionesData || [];
+                return inspiracionesData;
+            } catch (error) {
+                console.error(`Error al obtener inspiraciones con color ID ${colorId}:`, error);
+                this.error = error;
+                throw error;
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
         async fetchInspiracionById(id) {
             this.isLoading = true;
             this.error = null;

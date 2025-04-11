@@ -4,7 +4,7 @@
         Volver a Iniciar sesión
     </NuxtLink>
     <DefaultTitleH1>Restablecer contraseña</DefaultTitleH1>
-    <p class="max-w-md">
+    <p class="max-w-[480px]">
         Ingrese el correo electrónico de su cuenta para poder reestablecer su
         contraseña.
     </p>

@@ -32,16 +32,16 @@
         </div>
     </ClientOnly>
 
-    <div v-if="showDeleteModal" class="flex items-center justify-center fixed z-50 inset-0">
+    <div v-if="showDeleteModal" class="flex items-center justify-center fixed z-50 inset-0 p-3">
         <div class="fixed inset-0 bg-black opacity-30"></div>
-        <div class="w-full max-w-sm flex flex-col gap-5 relative bg-white rounded-3xl pt-10 p-6 z-10">
+        <div class="w-full max-w-[480px] flex flex-col gap-5 relative bg-white rounded-3xl pt-10 p-6 z-10">
             <button @click="showDeleteModal = false" class="absolute top-4 right-4">
                 <Icon name="tabler:plus" size="1.5rem" class="rotate-45" />
             </button>
             <h2 class="text-2xl text-center">¿Estás seguro de que deseas eliminar la obra "{{ obraToDelete?.titulo }}"?
             </h2>
             <p class="text-center text-light">Esta acción es irreversible</p>
-            <div class="flex justify-center gap-4">
+            <div class="flex justify-center flex-wrap gap-4">
                 <ButtonPrimary @click="showDeleteModal = false">
                     Cancel
                 </ButtonPrimary>

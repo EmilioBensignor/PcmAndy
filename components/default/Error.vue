@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full flex justify-center items-center gap-1">
+    <div class="w-full flex items-center gap-1 mt-3">
         <Icon name="tabler:alert-octagon" class="text-error" />
         <p class="text-error text-xs">
             <slot />
