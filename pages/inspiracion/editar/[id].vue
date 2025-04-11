@@ -1,3 +1,5 @@
+// Modificación en el componente Edit.vue para cargar correctamente la imagen
+
 <template>
     <DefaultTitleH1>Editar Inspiración</DefaultTitleH1>
     <div v-if="isLoading" class="flex justify-center items-center h-40">
@@ -28,10 +30,15 @@ onMounted(async () => {
         // Cargar la información de la inspiración
         const inspiracion = await inspiracionesStore.fetchInspiracionById(inspiracionId.value);
 
+        // Importante: asegurarnos de que la URL de imagen sea correcta
         inspiracionData.value = {
             id: inspiracion.id,
             imagen_url: inspiracion.imagen_url || null
         };
+
+        // Importante: Asegúrate de esperar a que se carguen los colores relacionados
+        // ya que el formulario los necesita al inicializarse
+        await inspiracionService.getInspiracionColores(inspiracionId.value);
     } catch (error) {
         console.error('Error al cargar la inspiración:', error);
         $toast.error('No se pudo cargar la información de la inspiración');
@@ -47,7 +54,7 @@ const handleSubmit = async (formData) => {
     try {
         $toast.info('Actualizando la inspiración...');
 
-        // Manejar la imagen directamente
+        // Manejar la imagen
         if (formData.imagen) {
             // Si hay una imagen nueva, la eliminamos si existía previamente
             if (inspiracionData.value.imagen_url) {

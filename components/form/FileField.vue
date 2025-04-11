@@ -1,20 +1,27 @@
+// FormFileField adaptado a partir de tu código original
 <template>
     <div class="w-full flex flex-col gap-2">
-        <p class="font-light">{{ label }}</p>
-        <div v-if="existingFileUrl && !modelValue" class="w-full mt-2">
+        <p class="font-light">{{ label }} <span v-if="required" class="text-red-500">*</span></p>
+
+        <!-- Imagen existente -->
+        <div v-if="existingImages && existingImages.length > 0 && !modelValue" class="w-full mt-2">
             <div class="relative border rounded-md p-2">
-                <img :src="existingFileUrl" alt="Imagen existente" class="w-full h-40 object-contain" />
+                <img :src="existingImages[0]" alt="Imagen existente" class="w-full h-40 object-contain" />
                 <div class="flex justify-end mt-2">
-                    <button type="button" class="text-sm bg-terciary text-white py-1 px-2 rounded" 
+                    <button type="button" class="text-sm bg-terciary text-white py-1 px-2 rounded"
                         @click="showFileUpload = true" v-if="!showFileUpload">
                         Cambiar imagen
                     </button>
                 </div>
             </div>
         </div>
-        <FileUpload v-if="!existingFileUrl || showFileUpload || modelValue" :id="id" mode="basic" :accept="accept"
-            :maxFileSize="maxFileSize" :chooseLabel="placeholder" @select="onSelect" />
 
+        <!-- Campo de carga de archivo -->
+        <FileUpload v-if="!existingImages.length || showFileUpload || modelValue" :id="id" mode="basic" :accept="accept"
+            :maxFileSize="maxFileSize" :chooseLabel="placeholder" @select="onSelect"
+            :required="required && !existingImages.length" />
+
+        <!-- Vista previa de nueva imagen -->
         <div v-if="modelValue && previewUrl" class="w-full mt-2">
             <div class="relative border rounded-md p-2">
                 <img :src="previewUrl" alt="Imagen seleccionada" class="w-full h-40 object-contain" />
@@ -25,85 +32,101 @@
                 </div>
             </div>
         </div>
+
+        <!-- Mensaje de error -->
         <DefaultError v-if="error">
             {{ error }}
         </DefaultError>
     </div>
 </template>
 
-<script>
-export default {
-    props: {
-        id: {
-            type: String,
-            required: true
-        },
-        label: {
-            type: String,
-            required: true
-        },
-        error: {
-            type: String,
-            default: null
-        },
-        modelValue: {
-            type: [File, null],
-            default: null
-        },
-        existingFileUrl: {
-            type: String,
-            default: null
-        },
-        accept: {
-            type: String,
-            default: 'image/*'
-        },
-        maxFileSize: {
-            type: Number,
-            default: 1000000
-        },
-        placeholder: {
-            type: String,
-            default: 'Seleccionar archivo'
-        }
+<script setup>
+// Importaciones y setup
+import { ref, watch, onBeforeUnmount, defineProps, defineEmits } from 'vue';
+
+const props = defineProps({
+    id: {
+        type: String,
+        required: true
     },
-    data() {
-        return {
-            showFileUpload: false,
-            previewUrl: null
-        }
+    label: {
+        type: String,
+        required: true
     },
-    watch: {
-        modelValue(newFile) {
-            if (newFile) {
-                this.createPreviewUrl(newFile);
-            } else {
-                this.previewUrl = null;
-            }
-        }
+    error: {
+        type: String,
+        default: null
     },
-    emits: ['update:modelValue', 'select'],
-    methods: {
-        onSelect(event) {
-            const file = event.files[0];
-            this.$emit('update:modelValue', file);
-            this.$emit('select', event);
-        },
-        removeFile() {
-            this.$emit('update:modelValue', null);
-            this.previewUrl = null;
-            this.showFileUpload = false;
-        },
-        createPreviewUrl(file) {
-            if (file) {
-                this.previewUrl = URL.createObjectURL(file);
-            }
-        }
+    modelValue: {
+        type: [File, null],
+        default: null
     },
-    beforeUnmount() {
-        if (this.previewUrl) {
-            URL.revokeObjectURL(this.previewUrl);
-        }
+    existingImages: {
+        type: Array,
+        default: () => []
+    },
+    accept: {
+        type: String,
+        default: 'image/*'
+    },
+    maxFileSize: {
+        type: Number,
+        default: 1000000
+    },
+    placeholder: {
+        type: String,
+        default: 'Seleccionar archivo'
+    },
+    required: {
+        type: Boolean,
+        default: false
     }
-}
+});
+
+const emit = defineEmits(['update:modelValue', 'select']);
+
+// Estado
+const showFileUpload = ref(false);
+const previewUrl = ref(null);
+
+// Observar cambios en el archivo seleccionado
+watch(() => props.modelValue, (newFile) => {
+    if (newFile) {
+        createPreviewUrl(newFile);
+    } else {
+        if (previewUrl.value) {
+            URL.revokeObjectURL(previewUrl.value);
+        }
+        previewUrl.value = null;
+    }
+}, { immediate: true });
+
+// Manejadores de eventos
+const onSelect = (event) => {
+    const file = event.files[0];
+    emit('update:modelValue', file);
+    emit('select', event);
+};
+
+const removeFile = () => {
+    emit('update:modelValue', null);
+    if (previewUrl.value) {
+        URL.revokeObjectURL(previewUrl.value);
+    }
+    previewUrl.value = null;
+    showFileUpload.value = false;
+};
+
+const createPreviewUrl = (file) => {
+    if (file) {
+        previewUrl.value = URL.createObjectURL(file);
+    }
+};
+
+// Limpiar recursos al desmontar
+onBeforeUnmount(() => {
+    if (previewUrl.value) {
+        URL.revokeObjectURL(previewUrl.value);
+    }
+});
 </script>

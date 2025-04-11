@@ -1,14 +1,15 @@
 <template>
     <FormLayout @submit.prevent="handleSubmit">
         <FormFieldsContainer>
-            <FormFileField id="imagen" label="Imágen*" v-model="form.imagen" :error="errors.imagen"
+            <!-- Usamos existingImages en lugar de existingFileUrl -->
+            <FormFileField id="imagen" :label="'Imágen'" v-model="form.imagen" :error="errors.imagen"
                 :existing-images="existingImages" accept="image/*" placeholder="Adjunte una imágen"
                 :maxFileSize="5000000" :required="!isEditing" />
         </FormFieldsContainer>
 
         <FormFieldsContainer>
             <div class="w-full flex flex-col gap-2">
-                <p class="font-light">Colores*</p>
+                <p class="font-light">Colores<span class="text-red-500">*</span></p>
                 <!-- Selector de colores simplificado (ordenado por posición) -->
                 <div class="flex flex-wrap gap-2 mt-2">
                     <button v-for="color in ordenarColoresPorPosicion(coloresOptions)" :key="color.value" type="button"
@@ -61,15 +62,46 @@ const emit = defineEmits(['submit']);
 const existingImages = ref([]);
 const coloresStore = useColoresStore();
 
+// Iniciar con un estado limpio
+const form = reactive({
+    imagen: null,
+    colores: [],
+    imagen_url: props.initialData?.imagen_url || null
+});
+
+const errors = reactive({
+    imagen: '',
+    colores: ''
+});
+
+// Cargar colores y configurar el formulario al montar
 onMounted(async () => {
     // Cargar los colores disponibles
     if (coloresStore.colores.length === 0) {
         await coloresStore.fetchColores();
     }
 
-    // Si estamos editando, cargar la imagen existente
+    // Si estamos editando y hay una URL de imagen, la agregamos a las imágenes existentes
     if (props.isEditing && props.initialData.imagen_url) {
         existingImages.value = [props.initialData.imagen_url];
+    }
+
+    // Si estamos en modo edición y tenemos un ID, cargar los colores asociados
+    if (props.isEditing && props.initialData?.id) {
+        try {
+            const coloresData = await coloresStore.getColoresByInspiracionId(props.initialData.id);
+            if (coloresData && coloresData.length > 0) {
+                // Convertir los colores al formato esperado para el formulario
+                form.colores = coloresData.map(color => ({
+                    value: color.id,
+                    label: color.nombre,
+                    hex: color.codigo_hex,
+                    posicion: color.posicion
+                }));
+            }
+        } catch (error) {
+            console.error('Error al cargar colores de la inspiración:', error);
+        }
     }
 });
 
@@ -81,17 +113,6 @@ const coloresOptions = computed(() => {
 const ordenarColoresPorPosicion = (colores) => {
     return [...colores].sort((a, b) => a.posicion - b.posicion);
 };
-
-const form = reactive({
-    imagen: null,
-    colores: [],
-    imagen_url: props.initialData?.imagen_url || null
-});
-
-const errors = reactive({
-    imagen: '',
-    colores: ''
-});
 
 // Métodos para manejar la selección de colores
 const isColorSelected = (colorId) => {
@@ -108,26 +129,6 @@ const toggleColor = (color) => {
     }
     validateColores();
 };
-
-// Cargar los colores existentes si estamos en modo edición
-if (props.isEditing && props.initialData?.id) {
-    onMounted(async () => {
-        try {
-            const coloresData = await coloresStore.getColoresByInspiracionId(props.initialData.id);
-            if (coloresData && coloresData.length > 0) {
-                // Convertir los colores al formato esperado
-                form.colores = coloresData.map(color => ({
-                    value: color.id,
-                    label: color.nombre,
-                    hex: color.codigo_hex,
-                    posicion: color.posicion
-                }));
-            }
-        } catch (error) {
-            console.error('Error al cargar colores de la inspiración:', error);
-        }
-    });
-}
 
 const {
     validateForm,
@@ -146,7 +147,7 @@ const handleSubmit = () => {
     const formData = {
         imagen: form.imagen,
         coloresIds: coloresIds,
-        imagen_url: props.isEditing ? existingImages.value[0] : null
+        imagen_url: props.isEditing && !form.imagen ? existingImages.value[0] : null
     };
 
     emit('submit', formData);

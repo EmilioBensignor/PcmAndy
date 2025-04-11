@@ -26,7 +26,7 @@
                 {{ formatDate(inspiracion.created_at) }}
             </div>
             <div class="flex gap-2">
-                <NuxtLink :to="`/inspiraciones/${inspiracion.id}/editar`" class="text-blue-500 hover:text-blue-700">
+                <NuxtLink :to="`${ROUTE_NAMES.INSPIRATION_EDIT}/${inspiracion.id}`" class="text-blue-500 hover:text-blue-700">
                     <Icon name="tabler:edit" size="20" />
                 </NuxtLink>
                 <button @click="$emit('delete', inspiracion)" class="text-red-500 hover:text-red-700">
@@ -38,6 +38,7 @@
 </template>
 
 <script setup>
+import { ROUTE_NAMES } from '~/constants/ROUTE_NAMES';
 import { useColoresStore } from '~/store/colores';
 
 const props = defineProps({
