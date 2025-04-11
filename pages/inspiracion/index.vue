@@ -1,7 +1,7 @@
 <template>
     <DefaultTitleH1>Inspiraciones</DefaultTitleH1>
     <div class="w-full flex justify-center items-center flex-wrap gap-6">
-        <NuxtLink :to="ROUTE_NAMES.INSPIRATIONS_CREATE"
+        <NuxtLink :to="ROUTE_NAMES.INSPIRATION_CREATE"
             class="bg-secondary rounded-[0.625rem] shadow-md text-white py-3 px-12">
             Agregar nueva
         </NuxtLink>
