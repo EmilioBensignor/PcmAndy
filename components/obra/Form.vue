@@ -11,23 +11,27 @@
         </FormFieldsContainer>
 
         <FormFieldsContainer>
-            <FormTextField id="descripcion" label="Descripción*" placeholder="Escribe una descripción de la obra"
-                v-model="form.descripcion" :error="errors.descripcion" @input="validateDescripcion" />
-            <FormTextField id="anio" label="Año*" placeholder="2025" v-model="form.anio" :error="errors.anio"
-                @input="validateAnio" />
-            <div class="flex items-center gap-2">
-                <FormTextField id="ancho" label="Ancho*" placeholder="120" v-model="form.ancho" :error="errors.ancho"
-                    @input="validateAncho" class="w-24" />
-                <span class="text-lg self-end -translate-y-2">X</span>
-                <FormTextField id="alto" label="Alto*" placeholder="88" v-model="form.alto" :error="errors.alto"
-                    @input="validateAlto" class="w-24" />
-                <span class="text-lg self-end -translate-y-2">cm</span>
+            <div class="lg:w-1/2">
+                <FormTextField id="descripcion" label="Descripción*" placeholder="Escribe una descripción de la obra"
+                    v-model="form.descripcion" :error="errors.descripcion" @input="validateDescripcion" />
+            </div>
+            <div class="lg:w-1/2 flex gap-4">
+                <FormTextField id="anio" label="Año*" placeholder="2025" v-model="form.anio" :error="errors.anio"
+                    @input="validateAnio" />
+                <div class="flex items-center gap-2">
+                    <FormTextField id="ancho" label="Ancho*" placeholder="120" v-model="form.ancho"
+                        :error="errors.ancho" @input="validateAncho" class="w-24" />
+                    <span class="text-lg self-end -translate-y-2">X</span>
+                    <FormTextField id="alto" label="Alto*" placeholder="88" v-model="form.alto" :error="errors.alto"
+                        @input="validateAlto" class="w-24" />
+                    <span class="text-lg self-end -translate-y-2">cm</span>
+                </div>
             </div>
         </FormFieldsContainer>
 
         <FormFieldsContainer>
             <div class="w-full flex flex-col gap-2">
-                <p class="font-light">Categoría*</p>
+                <p class="font-light lg:text-xl">Categoría*</p>
                 <Select id="categoria" v-model="form.categoria" :options="categorias" optionLabel="nombre"
                     optionValue="id" placeholder="Seleccione una categoría" class="w-full"
                     @change="validateCategoria" />
@@ -39,18 +43,22 @@
                 data-off="Desactivado" />
         </FormFieldsContainer>
 
-        <div class="w-full flex flex-wrap justify-center gap-4">
-            <ButtonPrimary :to="`${ROUTE_NAMES.WORKS}`">
-                Cancelar
-            </ButtonPrimary>
-            <ButtonSecondary type="submit" :disabled="isLoading">
-                <span v-if="isLoading">
-                    {{ isEditing ? 'Actualizando...' : 'Guardando...' }}
-                </span>
-                <span v-else>
-                    {{ isEditing ? 'Actualizar' : 'Crear' }}
-                </span>
-            </ButtonSecondary>
+        <div class="w-full flex flex-wrap justify-center gap-4 lg:gap-5">
+            <div class="w-full max-w-[180px] flex">
+                <ButtonPrimary :to="`${ROUTE_NAMES.WORKS}`">
+                    Cancelar
+                </ButtonPrimary>
+            </div>
+            <div class="w-full max-w-[180px] flex">
+                <ButtonSecondary type="submit" :disabled="isLoading">
+                    <span v-if="isLoading">
+                        {{ isEditing ? 'Actualizando...' : 'Guardando...' }}
+                    </span>
+                    <span v-else>
+                        {{ isEditing ? 'Actualizar' : 'Crear' }}
+                    </span>
+                </ButtonSecondary>
+            </div>
         </div>
     </FormLayout>
 </template>

@@ -1,6 +1,6 @@
 <template>
     <div class="w-full flex flex-col gap-2">
-        <p class="font-light">{{ label }}</p>
+        <p class="font-light lg:text-xl">{{ label }}</p>
 
         <!-- Imagen existente -->
         <div v-if="existingImages && existingImages.length > 0 && !modelValue" class="mt-2">

@@ -1,6 +1,6 @@
 <template>
     <DefaultTitleH1>Obras</DefaultTitleH1>
-    <div class="w-full flex justify-center items-center flex-wrap gap-6">
+    <div class="w-full flex justify-center items-center flex-wrap gap-6 lg:gap-9">
         <NuxtLink :to="ROUTE_NAMES.WORKS_CREATE"
             class="bg-secondary rounded-[0.625rem] shadow-md text-white py-3 px-12">
             Agregar nueva
@@ -8,7 +8,7 @@
         <div class="relative">
             <input v-model="searchTerm" type="text" id="search" placeholder="Busca una obra"
                 class="w-full bg-white border rounded-[0.625rem] shadow-md focus:outline-none pl-10 pr-3 py-3" />
-            <Icon name="tabler:search" class="absolute left-3 top-1/2 transform -translate-y-1/2" />
+            <Icon name="tabler:search" size="1.125rem" class="absolute left-3 top-1/2 transform -translate-y-1/2" />
         </div>
     </div>
 
@@ -27,27 +27,33 @@
     </ClientOnly>
 
     <ClientOnly v-else>
-        <div class="grid grid-cols-1 justify-items-center md:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div class="flex flex-wrap justify-center gap-8">
             <ObraCard v-for="obra in filteredObras" :key="obra.id" :obra="obra" @delete="confirmDelete" />
         </div>
     </ClientOnly>
 
     <div v-if="showDeleteModal" class="flex items-center justify-center fixed z-50 inset-0 p-3">
         <div class="fixed inset-0 bg-black opacity-30"></div>
-        <div class="w-full max-w-[480px] flex flex-col gap-5 relative bg-white rounded-3xl pt-10 p-6 z-10">
+        <div
+            class="w-full max-w-[480px] lg:max-w-4xl flex flex-col gap-5 lg:gap-6 relative bg-white rounded-3xl pt-10 p-6 z-10">
             <button @click="showDeleteModal = false" class="absolute top-4 right-4">
                 <Icon name="tabler:plus" size="1.5rem" class="rotate-45" />
             </button>
-            <h2 class="text-2xl text-center">¿Estás seguro de que deseas eliminar la obra "{{ obraToDelete?.titulo }}"?
+            <h2 class="text-xl lg:text-2xl text-center">¿Estás seguro de que deseas eliminar la obra "{{
+                obraToDelete?.titulo }}"?
             </h2>
-            <p class="text-center text-light">Esta acción es irreversible</p>
-            <div class="flex justify-center flex-wrap gap-4">
-                <ButtonPrimary @click="showDeleteModal = false">
-                    Cancel
-                </ButtonPrimary>
-                <ButtonSecondary @click="deleteObra">
-                    Eliminar
-                </ButtonSecondary>
+            <p class="text-center lg:text-xl text-light">Esta acción es irreversible</p>
+            <div class="w-full flex justify-center flex-wrap gap-4 lg:gap-5">
+                <div class="w-full max-w-[180px]">
+                    <ButtonPrimary @click="showDeleteModal = false">
+                        Cancel
+                    </ButtonPrimary>
+                </div>
+                <div class="w-full max-w-[180px]">
+                    <ButtonSecondary @click="deleteObra">
+                        Eliminar
+                    </ButtonSecondary>
+                </div>
             </div>
         </div>
     </div>

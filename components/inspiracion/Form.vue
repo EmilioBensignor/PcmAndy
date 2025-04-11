@@ -8,10 +8,10 @@
 
         <FormFieldsContainer>
             <div class="w-full flex flex-col gap-2">
-                <p class="font-light">Colores*</p>
-                <div class="w-full max-w-[420px] flex flex-wrap gap-6 my-2">
+                <p class="font-light lg:text-xl">Colores*</p>
+                <div class="w-full max-w-[420px] md:max-w-full flex flex-wrap gap-6 my-2">
                     <button v-for="color in ordenarColoresPorPosicion(coloresOptions)" :key="color.value" type="button"
-                        class="w-10 h-10 rounded-md transition-all"
+                        class="w-10 h-10 lg:w-12 lg:h-12 rounded-md transition-all"
                         :class="isColorSelected(color.value) ? 'rotate-45' : ''" :style="{ backgroundColor: color.hex }"
                         @click="toggleColor(color)"></button>
                 </div>
@@ -19,18 +19,22 @@
             </div>
         </FormFieldsContainer>
 
-        <div class="w-full flex flex-wrap justify-center gap-4 mt-4">
-            <ButtonPrimary :to="`${ROUTE_NAMES.INSPIRATION}`">
-                Cancelar
-            </ButtonPrimary>
-            <ButtonSecondary type="submit" :disabled="isLoading">
-                <span v-if="isLoading">
-                    {{ isEditing ? 'Actualizando...' : 'Guardando...' }}
-                </span>
-                <span v-else>
-                    {{ isEditing ? 'Actualizar' : 'Crear' }}
-                </span>
-            </ButtonSecondary>
+        <div class="w-full flex flex-wrap justify-center items-center gap-4 lg:gap-5 mt-4">
+            <div class="w-full max-w-max flex">
+                <ButtonPrimary :to="`${ROUTE_NAMES.INSPIRATION}`">
+                    Cancelar
+                </ButtonPrimary>
+            </div>
+            <div class="w-full max-w-max flex">
+                <ButtonSecondary type="submit" :disabled="isLoading">
+                    <span v-if="isLoading">
+                        {{ isEditing ? 'Actualizando...' : 'Guardando...' }}
+                    </span>
+                    <span v-else>
+                        {{ isEditing ? 'Actualizar' : 'Crear' }}
+                    </span>
+                </ButtonSecondary>
+            </div>
         </div>
     </FormLayout>
 </template>

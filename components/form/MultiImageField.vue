@@ -1,15 +1,19 @@
 <template>
     <div class="w-full flex flex-col gap-2">
-        <p class="font-light">{{ label }}</p>
+        <p class="font-light lg:text-xl">{{ label }}</p>
+
+        <!-- Subida de archivos -->
+        <FileUpload :id="id" mode="advanced" :accept="accept" :multiple="true" :maxFileSize="maxFileSize"
+            :chooseLabel="placeholder" :auto="true" :customUpload="true" @uploader="onUpload" @select="onSelect"
+            @remove="onRemove" />
 
         <!-- Imágenes existentes -->
-        <div v-if="existingImages && existingImages.length > 0"
-            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+        <div v-if="existingImages && existingImages.length > 0" class="flex flex-wrap gap-4 mt-2">
             <div v-for="(img, index) in existingImages" :key="`existing-${index}`"
-                class="flex flex-col relative border rounded-md p-2">
+                class="w-full flex flex-col relative border rounded-md p-2">
                 <img :src="img" alt="Imagen existente" class="h-40 object-contain" />
                 <div class="flex justify-between mt-2">
-                    <button type="button" 
+                    <button type="button"
                         :class="`text-sm ${index === imagenPrincipalIndex ? 'bg-secondary' : 'bg-terciary'} text-white py-1 px-2 rounded`"
                         @click="setPrincipal(index)">
                         {{ index === imagenPrincipalIndex ? 'Principal' : 'Hacer principal' }}
@@ -22,17 +26,13 @@
             </div>
         </div>
 
-        <!-- Subida de archivos -->
-        <FileUpload :id="id" mode="advanced" :accept="accept" :multiple="true" :maxFileSize="maxFileSize"
-            :chooseLabel="placeholder" :auto="true" :customUpload="true" @uploader="onUpload" @select="onSelect"
-            @remove="onRemove" />
-
         <!-- Previsualización de imágenes nuevas -->
-        <div v-if="previewUrls.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
-            <div v-for="(url, index) in previewUrls" :key="`preview-${index}`" class="flex flex-col relative border rounded-md p-2">
+        <div v-if="previewUrls.length > 0" class="flex flex-wrap gap-4 mt-2">
+            <div v-for="(url, index) in previewUrls" :key="`preview-${index}`"
+                class="w-full flex flex-col relative border rounded-md p-2">
                 <img :src="url" alt="Vista previa" class="h-40 object-contain" />
                 <div class="flex justify-between mt-2">
-                    <button type="button" 
+                    <button type="button"
                         :class="`text-sm ${index === previewDestacadaIndex ? 'bg-secondary' : 'bg-terciary'} text-white py-1 px-2 rounded`"
                         @click="setPrincipalNew(index)">
                         {{ index === previewDestacadaIndex ? 'Principal' : 'Hacer principal' }}

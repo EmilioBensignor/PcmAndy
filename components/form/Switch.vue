@@ -1,6 +1,6 @@
 <template>
     <div class="w-full flex flex-col gap-2">
-        <p class="font-light">{{ label }}</p>
+        <p class="font-light lg:text-xl">{{ label }}</p>
         <label class="w-14 h-7 inline-block relative cursor-pointer">
             <input type="checkbox" :id="id" :checked="modelValue"
                 @change="$emit('update:modelValue', $event.target.checked)" class="w-0 h-0 opacity-0" />
