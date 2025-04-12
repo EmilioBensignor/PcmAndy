@@ -33,7 +33,6 @@ export const useSupabaseCache = () => {
         try {
             const sessionData = {
                 access_token: session.access_token,
-                refresh_token: session.refresh_token,
                 expires_at: session.expires_at,
                 user_id: session.user.id,
                 email: session.user.email
