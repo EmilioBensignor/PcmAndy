@@ -1,5 +1,6 @@
 :root {
     --primary-color: #F49CBB;
+    --primary-hover-color: #E96B97;
     --secondary-color: #DD2D4A;
     --terciary-color: #880D1E;
     --black-color: #2B2D42;
@@ -153,8 +154,7 @@ form .p-password-toggle-mask-icon {
 
 .p-button.primaryButton:hover,
 .active {
-    background: var(--secondary-color) !important;
-    color: #fff !important;
+    background: var(--primary-hover-color) !important;
 }
 
 form .p-fileupload-header,

@@ -1,10 +1,11 @@
 <template>
     <DefaultTitleH1>Obras</DefaultTitleH1>
     <div class="w-full flex justify-center items-center flex-wrap gap-6 lg:gap-9">
-        <NuxtLink :to="ROUTE_NAMES.WORKS_CREATE"
-            class="bg-secondary rounded-[0.625rem] shadow-md text-white py-3 px-12">
-            Agregar nueva
-        </NuxtLink>
+        <div class="flex">
+            <ButtonSecondary :to="ROUTE_NAMES.WORKS_CREATE">
+                Agregar nueva
+            </ButtonSecondary>
+        </div>
         <div class="relative">
             <input v-model="searchTerm" type="text" id="search" placeholder="Busca una obra"
                 class="w-full bg-white border rounded-[0.625rem] shadow-md focus:outline-none pl-10 pr-3 py-3" />

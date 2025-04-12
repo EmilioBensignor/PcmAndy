@@ -1,8 +1,8 @@
 <template>
-    <NuxtLink v-if="to" :to="to" class="w-full max-w-[480px] bg-secondary text-center lg:text-xl text-white rounded-[0.625rem] shadow-1 py-3 px-12">
+    <NuxtLink v-if="to" :to="to" class="w-full max-w-[480px] bg-secondary hover:bg-secondaryHover text-center lg:text-xl text-white rounded-[0.625rem] shadow-1 transition duration-300 py-3 px-12">
         <slot />
     </NuxtLink>
-    <button v-else type="button" class="w-full max-w-[480px] bg-secondary text-center lg:text-xl text-white rounded-[0.625rem] shadow-1 py-3 px-12">
+    <button v-else type="button" class="w-full max-w-[480px] bg-secondary hover:bg-secondaryHover text-center lg:text-xl text-white rounded-[0.625rem] shadow-1 transition duration-300 py-3 px-12">
         <slot />
     </button>
 </template>
