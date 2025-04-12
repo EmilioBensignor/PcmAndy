@@ -94,7 +94,7 @@ const handleForgotPassword = async () => {
 
     try {
         const baseUrl = import.meta.env.PROD
-            ? 'https://pcm.weglam.com.ar'
+            ? 'https://pcm.andyloisch.com.ar'
             : 'http://localhost:3000';
 
         const redirectUrl = `${baseUrl}${ROUTE_NAMES.RESET_PASSWORD}`;
