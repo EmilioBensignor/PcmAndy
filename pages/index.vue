@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-wrap justify-center gap-14 py-14">
-        <article v-for="(option, index) in options" :key="index" class="w-[160px] relative">
+        <article v-for="(option, index) in options" :key="index" class="w-[160px] relative rounded-[0.625rem] shadow-1">
             <NuxtImg :src="`/images/${option.img}.png`" :alt="option.title" class="w-full rounded-t-[0.625rem]" />
 
             <button @click="toggleDropdown(index)"
