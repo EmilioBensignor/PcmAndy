@@ -1,16 +1,24 @@
 <template>
     <DefaultTitleH1>Obras</DefaultTitleH1>
+    <div class="flex">
+        <ButtonSecondary :to="ROUTE_NAMES.WORKS_CREATE">
+            Agregar nueva
+        </ButtonSecondary>
+    </div>
     <div class="w-full flex justify-center items-center flex-wrap gap-6 lg:gap-9">
-        <div class="flex">
-            <ButtonSecondary :to="ROUTE_NAMES.WORKS_CREATE">
-                Agregar nueva
-            </ButtonSecondary>
-        </div>
-        <div class="relative">
+        <div class="w-full max-w-[320px] relative">
             <input v-model="searchTerm" type="text" id="search" placeholder="Busca una obra"
-                class="w-full bg-white border rounded-[0.625rem] shadow-md focus:outline-none pl-10 pr-3 py-3" />
+                class="w-full bg-white border rounded-[0.625rem] shadow-md focus:outline-none pl-10 pr-3 py-2" />
             <Icon name="tabler:search" size="1.125rem" class="absolute left-3 top-1/2 transform -translate-y-1/2" />
+            <button v-if="searchTerm" @click="searchTerm = ''"
+                class="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <Icon name="tabler:x" size="1.125rem" />
+            </button>
         </div>
+        <Select id="categoria" v-model="selectedCategory" :options="categoriasWithAll" optionLabel="nombre"
+            optionValue="id" placeholder="Categoría" class="max-w-[320px] md:max-w-[210px]" />
+        <Select id="ordenar" v-model="sortOption" :options="sortOptions" optionLabel="nombre" optionValue="value"
+            placeholder="Ordenar por" class="max-w-[320px] md:max-w-[250px]" />
     </div>
 
     <ClientOnly v-if="isLoading">
@@ -62,36 +70,88 @@
 
 <script setup>
 import { useObrasStore } from '~/store/obras';
+import { useCategoriasStore } from '~/store/categorias';
 import { ROUTE_NAMES } from '~/constants/ROUTE_NAMES';
 
 const obrasStore = useObrasStore();
+const categoriasStore = useCategoriasStore();
 const { $toast } = useNuxtApp();
 
 const searchTerm = ref('');
+const selectedCategory = ref(null);
+const sortOption = ref(null);
 const isLoading = ref(false);
 const showDeleteModal = ref(false);
 const obraToDelete = ref(null);
 
+const sortOptions = [
+    { nombre: 'Recientes', value: 'recent' },
+    { nombre: 'Más viejo a más nuevo', value: 'oldest' },
+    { nombre: 'Año', value: 'year' }
+];
+
+const categorias = computed(() => categoriasStore.getCategorias);
+
+const categoriasWithAll = computed(() => [
+    { nombre: 'Todas las categorías', id: null },
+    ...categorias.value
+]);
+
 onMounted(async () => {
     isLoading.value = true;
     try {
-        await obrasStore.fetchObras();
+        await Promise.all([
+            obrasStore.fetchObras(),
+            categoriasStore.fetchCategorias()
+        ]);
     } catch (error) {
-        $toast.error('No se pudieron cargar las obras');
+        $toast.error('No se pudieron cargar los datos');
     } finally {
         isLoading.value = false;
     }
 });
 
 const filteredObras = computed(() => {
-    if (!searchTerm.value) return obrasStore.getObras;
+    // Empezamos con todas las obras
+    let result = obrasStore.getObras;
 
-    const term = searchTerm.value.toLowerCase();
-    return obrasStore.getObras.filter(obra =>
-        (obra.titulo?.toLowerCase().includes(term)) ||
-        (obra.descripcion?.toLowerCase().includes(term)) ||
-        (obra.categoria?.toLowerCase().includes(term))
-    );
+    // Aplicar filtro por término de búsqueda si existe
+    if (searchTerm.value) {
+        const term = searchTerm.value.toLowerCase();
+        result = result.filter(obra =>
+            (obra.titulo?.toLowerCase().includes(term)) ||
+            (obra.descripcion?.toLowerCase().includes(term)) ||
+            (obra.categoria?.toLowerCase().includes(term))
+        );
+    }
+
+    // Aplicar filtro por categoría si está seleccionada
+    if (selectedCategory.value) {
+        result = result.filter(obra => obra.categoria_id === selectedCategory.value);
+    }
+
+    // Aplicar el ordenamiento según la opción seleccionada
+    if (sortOption.value) {
+        switch (sortOption.value) {
+            case 'recent':
+                // Por defecto ya están ordenados por más recientes primero
+                break;
+            case 'oldest':
+                // Invertimos el orden actual (suponiendo que por defecto es más reciente primero)
+                result = [...result].reverse();
+                break;
+            case 'year':
+                // Ordenar por año (de más reciente a más antiguo)
+                result = [...result].sort((a, b) => {
+                    const yearA = a.anio ? parseInt(a.anio) : 0;
+                    const yearB = b.anio ? parseInt(b.anio) : 0;
+                    return yearB - yearA;
+                });
+                break;
+        }
+    }
+
+    return result;
 });
 
 const confirmDelete = (obra) => {

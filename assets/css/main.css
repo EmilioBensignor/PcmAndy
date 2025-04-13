@@ -50,42 +50,41 @@ footer {
 
 /* Form */
 
-form .p-inputtext,
-form .p-password,
-form .p-select {
+.p-inputtext,
+.p-password,
+.p-select {
     width: 100%;
-    position: relative;
-    background: transparent;
-    border: 1px solid var(--black-color);
-    border-radius: 0.625rem;
-    font-size: 1rem;
-    color: var(--black-color);
-    padding: 0.5rem 0.75rem;
+    position: relative !important;
+    background: transparent !important;
+    border: 1px solid var(--black-color) !important;
+    border-radius: 0.625rem !important;
+    font-size: 1rem !important;
+    color: var(--black-color) !important;
+    padding: 0.5rem 0.75rem !important;
 }
 
-form .p-password .p-inputtext {
+.p-password .p-inputtext {
     border: none;
     border-radius: 0;
     background: none;
     padding: 0;
 }
 
-form .p-password .p-inputtext:focus {
+.p-password .p-inputtext:focus {
     outline: none;
 }
 
-form .p-inputtext::placeholder,
-form .p-password input::placeholder,
-/* form .p-textarea, */
-form .p-select .p-placeholder,
+.p-inputtext::placeholder,
+.p-password input::placeholder,
+.p-select .p-placeholder,
 input::placeholder {
-    font-size: 1rem;
-    font-weight: 300;
-    font-family: "Outfit", sans-serif;
-    color: var(--gray-color);
+    font-size: 1rem !important;
+    font-weight: 300 !important;
+    font-family: "Outfit", sans-serif !important;
+    color: var(--gray-color) !important;
 }
 
-form .p-password-toggle-mask-icon {
+.p-password-toggle-mask-icon {
     width: 1.5rem;
     height: 1.125rem;
     position: absolute;
@@ -157,16 +156,16 @@ form .p-password-toggle-mask-icon {
     background: var(--primary-hover-color) !important;
 }
 
-form .p-fileupload-header,
-form .p-fileupload-basic {
+.p-fileupload-header,
+.p-fileupload-basic {
     flex-direction: row;
     justify-content: flex-start;
     gap: 0.5rem;
     border: none;
 }
 
-form .p-fileupload-header .p-button,
-form .p-fileupload-basic .p-button {
+.p-fileupload-header .p-button,
+.p-fileupload-basic .p-button {
     width: max-content;
     gap: 0.625rem;
     background: #DDD !important;
@@ -176,24 +175,24 @@ form .p-fileupload-basic .p-button {
     padding: 0.875rem;
 }
 
-form .p-fileupload-header .p-button:not(.p-button:first-of-type),
+.p-fileupload-header .p-button:not(.p-button:first-of-type),
 .p-fileupload-basic .p-button:not(.p-button:first-of-type) {
     display: none !important;
 }
 
-form .p-fileupload-header .p-button .p-icon,
+.p-fileupload-header .p-button .p-icon,
 .p-fileupload-basic .p-button .p-icon {
     width: 0.75rem;
     height: 0.75rem;
 }
 
-form .p-fileupload-header .p-message-error,
+.p-fileupload-header .p-message-error,
 .p-fileupload-basic {
     width: 100%;
     outline: none;
 }
 
-form .p-fileupload-header .p-message-text,
+.p-fileupload-header .p-message-text,
 .p-fileupload-basic .p-message-text {
     color: #DE5E5E;
 }
@@ -284,17 +283,17 @@ form .p-fileupload-header .p-message-text,
         font-size: 1.25rem !important;
     }
 
-    form .p-inputtext::placeholder,
-    form .p-password input::placeholder,
+    .p-inputtext::placeholder,
+    .p-password input::placeholder,
     input::placeholder,
-    form .p-select .p-placeholder,
-    form .p-inputtext,
-    form .p-password,
-    form .p-select {
+    .p-select .p-placeholder,
+    .p-inputtext,
+    .p-password,
+    .p-select {
         font-size: 1.25rem;
     }
 
-    form .p-inputtext, form .p-password, form .p-select {
+    .p-inputtext, .p-password, .p-select {
         padding: 0.5rem 0.875rem;
     }
 
