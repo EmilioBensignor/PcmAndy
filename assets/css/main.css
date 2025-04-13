@@ -158,19 +158,19 @@ input::placeholder {
 
 .p-fileupload-header,
 .p-fileupload-basic {
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 0.5rem;
-    border: none;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 0.5rem !important;
+    border: none !important;
 }
 
 .p-fileupload-header .p-button,
 .p-fileupload-basic .p-button {
-    width: max-content;
-    gap: 0.625rem;
+    width: max-content !important;
+    gap: 0.625rem !important;
     background: #DDD !important;
     color: var(--black-color);
-    border-radius: 5px;
+    border-radius: 5px !important;
     font-weight: 300;
     padding: 0.875rem;
 }

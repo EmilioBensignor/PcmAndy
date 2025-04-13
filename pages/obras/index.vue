@@ -8,7 +8,7 @@
     <div class="w-full flex justify-center items-center flex-wrap gap-6 lg:gap-9">
         <div class="w-full max-w-[320px] relative">
             <input v-model="searchTerm" type="text" id="search" placeholder="Busca una obra"
-                class="w-full bg-white border rounded-[0.625rem] shadow-md focus:outline-none pl-10 pr-3 py-2" />
+                class="w-full bg-white border rounded-[0.625rem] focus:outline-none pl-10 pr-3 py-2" />
             <Icon name="tabler:search" size="1.125rem" class="absolute left-3 top-1/2 transform -translate-y-1/2" />
             <button v-if="searchTerm" @click="searchTerm = ''"
                 class="absolute right-3 top-1/2 transform -translate-y-1/2">
