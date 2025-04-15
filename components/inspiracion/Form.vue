@@ -1,5 +1,5 @@
 <template>
-    <FormLayout @submit.prevent="handleSubmit">
+    <FormLayout @submit.prevent="handleSubmit" @keydown.enter.prevent>
         <FormFieldsContainer>
             <FormFileField id="imagen" :label="'Imágen*'" v-model="form.imagen" :error="errors.imagen"
                 :existing-images="existingImages" accept="image/*" placeholder="Adjunte una imágen"

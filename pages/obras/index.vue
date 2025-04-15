@@ -36,7 +36,7 @@
     </ClientOnly>
 
     <ClientOnly v-else>
-        <div class="flex flex-wrap justify-center gap-8">
+        <div class="w-full flex flex-wrap justify-center gap-8">
             <ObraCard v-for="obra in filteredObras" :key="obra.id" :obra="obra" @delete="confirmDelete" />
         </div>
     </ClientOnly>

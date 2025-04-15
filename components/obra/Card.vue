@@ -7,7 +7,8 @@
             <p class="text-white font-light lg:text-xl">{{ obra.titulo }}</p>
             <div class="flex gap-3">
                 <img :src="obra.imagen_url" :alt="obra.titulo" class="w-1/2 max-h-[180px] object-cover">
-                <div class="flex flex-col gap-3">
+                <div class="flex flex-col gap-1">
+                    <p class="text-white font-light">Descripción: {{ obra.descripcion }}</p>
                     <p class="text-white font-light">Año: {{ obra.anio }}</p>
                     <p class="text-white font-light">Tamaño: {{ obra.ancho }} x {{ obra.alto
                     }} cm</p>

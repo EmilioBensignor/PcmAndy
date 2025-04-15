@@ -1,5 +1,5 @@
 <template>
-    <FormLayout @submit.prevent="handleSubmit">
+    <FormLayout @submit.prevent="handleSubmit" @keydown.enter.prevent>
         <FormFieldsContainer>
             <FormTextField id="titulo" label="Título*" placeholder="Escribe el título de la obra" v-model="form.titulo"
                 :error="errors.titulo" @input="validateTitulo" />
