@@ -35,9 +35,9 @@
                 <Select id="categoria" v-model="form.categoria" :options="categorias" optionLabel="nombre"
                     optionValue="id" placeholder="Seleccione una categoría" class="w-full"
                     @change="validateCategoria" />
-                <div v-if="errors.categoria" class="text-red-500 text-sm mt-1">
+                <DefaultError v-if="errors.categoria">
                     {{ errors.categoria }}
-                </div>
+                </DefaultError>
             </div>
             <FormSwitch id="destacado" label="Destacado" v-model="form.destacado" data-on="Activado"
                 data-off="Desactivado" />
