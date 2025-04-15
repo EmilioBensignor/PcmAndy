@@ -51,7 +51,7 @@ footer {
 /* Form */
 
 .p-inputtext,
-.p-password,
+.p-password input,
 .p-select {
     width: 100%;
     position: relative !important;
@@ -85,11 +85,10 @@ input::placeholder {
 }
 
 .p-password-toggle-mask-icon {
-    width: 1.5rem;
-    height: 1.125rem;
-    position: absolute;
-    top: 30%;
-    right: 0.875rem;
+    width: 1.5rem !important;
+    height: 1.125rem !important;
+    top: 30% !important;
+    right: 0.875rem !important;
     cursor: pointer;
     margin-top: 0;
 }
@@ -293,7 +292,9 @@ input::placeholder {
         font-size: 1.25rem;
     }
 
-    .p-inputtext, .p-password, .p-select {
+    .p-inputtext,
+    .p-password input,
+    .p-select {
         padding: 0.5rem 0.875rem;
     }
 
