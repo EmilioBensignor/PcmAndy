@@ -43,13 +43,8 @@
                 data-off="Desactivado" />
         </FormFieldsContainer>
 
-        <div class="w-full flex flex-wrap justify-center gap-4 lg:gap-5">
-            <div class="w-full max-w-[180px] flex">
-                <ButtonPrimary :to="`${ROUTE_NAMES.WORKS}`">
-                    Cancelar
-                </ButtonPrimary>
-            </div>
-            <div class="w-full max-w-[180px] flex">
+        <div class="w-full flex flex-col sm:flex-row justify-center items-center gap-4 lg:gap-5">
+            <div class="w-full max-w-max flex">
                 <ButtonSecondary type="submit" :disabled="isLoading">
                     <span v-if="isLoading">
                         {{ isEditing ? 'Actualizando...' : 'Guardando...' }}
@@ -58,6 +53,11 @@
                         {{ isEditing ? 'Actualizar' : 'Crear' }}
                     </span>
                 </ButtonSecondary>
+            </div>
+            <div class="w-full max-w-max flex">
+                <ButtonPrimary :to="`${ROUTE_NAMES.WORKS}`">
+                    Cancelar
+                </ButtonPrimary>
             </div>
         </div>
     </FormLayout>

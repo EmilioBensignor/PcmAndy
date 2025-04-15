@@ -56,14 +56,14 @@
                 v-if="inspiracionToDelete?.imagen_url" alt="Imagen de inspiración" />
             <div class="w-full flex justify-center flex-wrap gap-4 lg:gap-5">
                 <div class="w-full max-w-[180px]">
-                    <ButtonPrimary @click="showDeleteModal = false">
-                        Cancelar
-                    </ButtonPrimary>
-                </div>
-                <div class="w-full max-w-[180px]">
                     <ButtonSecondary @click="deleteInspiracion">
                         Eliminar
                     </ButtonSecondary>
+                </div>
+                <div class="w-full max-w-[180px]">
+                    <ButtonPrimary @click="showDeleteModal = false">
+                        Cancelar
+                    </ButtonPrimary>
                 </div>
             </div>
         </div>

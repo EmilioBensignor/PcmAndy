@@ -19,12 +19,7 @@
             </div>
         </FormFieldsContainer>
 
-        <div class="w-full flex flex-wrap justify-center items-center gap-4 lg:gap-5 mt-4">
-            <div class="w-full max-w-max flex">
-                <ButtonPrimary :to="`${ROUTE_NAMES.INSPIRATION}`">
-                    Cancelar
-                </ButtonPrimary>
-            </div>
+        <div class="w-full flex flex-col sm:flex-row justify-center items-center gap-4 lg:gap-5 mt-4">
             <div class="w-full max-w-max flex">
                 <ButtonSecondary type="submit" :disabled="isLoading">
                     <span v-if="isLoading">
@@ -34,6 +29,11 @@
                         {{ isEditing ? 'Actualizar' : 'Crear' }}
                     </span>
                 </ButtonSecondary>
+            </div>
+            <div class="w-full max-w-max flex">
+                <ButtonPrimary :to="`${ROUTE_NAMES.INSPIRATION}`">
+                    Cancelar
+                </ButtonPrimary>
             </div>
         </div>
     </FormLayout>

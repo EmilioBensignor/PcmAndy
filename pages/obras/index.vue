@@ -54,14 +54,14 @@
             <p class="text-center lg:text-xl text-light">Esta acción es irreversible</p>
             <div class="w-full flex justify-center flex-wrap gap-4 lg:gap-5">
                 <div class="w-full max-w-[180px]">
-                    <ButtonPrimary @click="showDeleteModal = false">
-                        Cancel
-                    </ButtonPrimary>
-                </div>
-                <div class="w-full max-w-[180px]">
                     <ButtonSecondary @click="deleteObra">
                         Eliminar
                     </ButtonSecondary>
+                </div>
+                <div class="w-full max-w-[180px]">
+                    <ButtonPrimary @click="showDeleteModal = false">
+                        Cancel
+                    </ButtonPrimary>
                 </div>
             </div>
         </div>

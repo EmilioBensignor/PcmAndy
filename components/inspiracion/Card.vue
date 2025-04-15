@@ -1,16 +1,13 @@
 <template>
     <div class="w-full max-w-[200px] flex flex-col justify-between bg-black rounded-[20px] overflow-hidden shadow-md">
-        <!-- Imagen de la inspiración -->
         <div class="w-full h-full flex flex-col justify-between gap-3 overflow-hidden pb-3 p-5">
             <img v-if="inspiracion.imagen_url" :src="inspiracion.imagen_url" alt="Imagen de inspiración"
-                class="w-full h-full object-cover" />
-            <!-- Colores asociados -->
+                class="w-full h-full max-h-[180px] object-cover" />
             <div class="flex flex-wrap justify-center gap-2">
                 <div v-for="color in inspiracionColores" :key="color.id" :style="{ backgroundColor: color.codigo_hex }"
                     class="w-7 h-7 rounded-md" :title="color.nombre"></div>
             </div>
         </div>
-        <!-- Acciones -->
         <div class="flex justify-between items-center border-t border-gray">
             <NuxtLink :to="`${ROUTE_NAMES.INSPIRATION_EDIT}/${inspiracion.id}`"
                 class="w-1/2 flex justify-center items-center p-3 border-r border-gray">
