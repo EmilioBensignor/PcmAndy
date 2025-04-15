@@ -51,8 +51,6 @@ const handleSubmit = async (formData) => {
     isSubmitting.value = true;
 
     try {
-        $toast.info('Actualizando la obra...');
-
         const imagenesToDelete = [];
         if (obraData.value.imagenes && formData.existingImages) {
             obraData.value.imagenes.forEach(imageUrl => {

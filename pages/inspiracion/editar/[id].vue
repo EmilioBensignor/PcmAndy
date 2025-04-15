@@ -48,8 +48,6 @@ const handleSubmit = async (formData) => {
     isSubmitting.value = true;
 
     try {
-        $toast.info('Actualizando la inspiración...');
-
         if (formData.imagen) {
             if (inspiracionData.value.imagen_url) {
                 await inspiracionService.deleteImage(inspiracionId.value, inspiracionData.value.imagen_url);

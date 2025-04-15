@@ -19,8 +19,6 @@ const handleSubmit = async (formData) => {
     isLoading.value = true;
 
     try {
-        $toast.info('Guardando la obra...');
-
         const obraData = obraService.prepareObraData(formData);
 
         const nuevaObra = await obrasStore.createObra(obraData);

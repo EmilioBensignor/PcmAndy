@@ -19,8 +19,6 @@ const handleSubmit = async (formData) => {
     isLoading.value = true;
 
     try {
-        $toast.info('Guardando la inspiración...');
-
         const nuevaInspiracion = await inspiracionesStore.createInspiracion({});
 
         if (!nuevaInspiracion || !nuevaInspiracion.id) {
