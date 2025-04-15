@@ -6,8 +6,8 @@
                 Agregar nueva
             </ButtonSecondary>
         </div>
-        <div class="w-full flex flex-col items-center gap-3 my-4">
-            <div class="w-full max-w-[400px] md:max-w-full flex flex-wrap justify-center gap-6 my-2">
+        <div class="w-full md:max-w-[780px] flex flex-col items-center gap-3 my-4">
+            <div class="w-full max-w-[400px] md:max-w-full flex flex-wrap justify-center md:justify-between gap-6 my-2">
                 <button v-for="color in ordenarColoresPorPosicion(coloresOptions)" :key="color.value" type="button"
                     class="w-10 h-10 lg:w-12 lg:h-12 rounded-md transition-all relative" :style="{
                         backgroundColor: color.hex,
@@ -16,7 +16,7 @@
                     }" @click="filtrarPorColor(color)">
                 </button>
             </div>
-            <button v-if="colorSeleccionado" @click="limpiarFiltro" class="self-start underline">
+            <button v-if="colorSeleccionado" @click="limpiarFiltro" class="md:self-start underline">
                 Limpiar filtro
             </button>
         </div>

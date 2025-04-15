@@ -15,7 +15,7 @@
                 <FormTextField id="descripcion" label="Descripción*" placeholder="Escribe una descripción de la obra"
                     v-model="form.descripcion" :error="errors.descripcion" @input="validateDescripcion" />
             </div>
-            <div class="lg:w-1/2 flex gap-4">
+            <div class="lg:w-1/2 flex items-start gap-4">
                 <FormTextField id="anio" label="Año*" placeholder="2025" v-model="form.anio" :error="errors.anio"
                     @input="validateAnio" />
                 <div class="flex items-center gap-2">
