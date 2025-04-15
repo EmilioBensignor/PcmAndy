@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-wrap justify-center gap-14 py-14">
-        <article v-for="(option, index) in options" :key="index" class="w-[160px] relative rounded-[0.625rem] shadow-1">
+        <article v-for="(option, index) in options" :key="index" class="w-[120px] sm:w-[160px] relative rounded-[0.625rem] shadow-1">
             <NuxtImg :src="`/images/${option.img}.png`" :alt="option.title" class="w-full rounded-t-[0.625rem]" />
 
             <button @click="toggleDropdown(index)"
@@ -17,7 +17,7 @@
                 <div v-if="activeDropdown === index && option.subOptions?.length"
                     class="w-full absolute z-10 overflow-hidden bg-terciary rounded-b-[0.625rem]">
                     <NuxtLink v-for="(subOption, subIndex) in option.subOptions" :key="subIndex" :to="subOption.url"
-                        class="w-full flex justify-center items-center py-3 px-1 text-white last-of-type:rounded-b-[0.625rem] last-of-type:border-t border-secondary">
+                        class="w-full flex justify-center items-center text-center py-3 px-1 text-white last-of-type:rounded-b-[0.625rem] last-of-type:border-t border-secondary">
                         {{ subOption.title }}
                     </NuxtLink>
                 </div>

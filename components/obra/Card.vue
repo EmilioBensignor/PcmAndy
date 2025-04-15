@@ -9,7 +9,7 @@
                 <img :src="obra.imagen_url" :alt="obra.titulo" class="w-1/2 object-cover">
                 <div class="flex flex-col gap-3">
                     <p class="text-white font-light">Año: {{ obra.anio }}</p>
-                    <p class="text-white font-light">Tamaño: {{ obra.dimensiones?.ancho }} x {{ obra.dimensiones?.alto
+                    <p class="text-white font-light">Tamaño: {{ obra.ancho }} x {{ obra.alto
                     }} cm</p>
                     <p class="text-white font-light">{{ obra.categoria }}</p>
                 </div>
