@@ -21,11 +21,14 @@
                     {{ link.label }}
                 </NuxtLink>
             </nav>
-            <button @click="signOut()"
-                class="w-full flex items-center gap-3 hover:bg-primaryHover rounded-[0.625rem] text-sm lg:text-base font-light text-black transition duration-300 p-3">
-                <Icon :name="`tabler:logout`" size="1.125rem" class="text-black" />
-                Cerrar sesión
-            </button>
+            <div>
+                <InstallPWA />
+                <button @click="signOut()"
+                    class="w-full flex items-center gap-3 hover:bg-primaryHover rounded-[0.625rem] text-sm lg:text-base font-light text-black transition duration-300 p-3">
+                    <Icon :name="`tabler:logout`" size="1.125rem" class="text-black" />
+                    Cerrar sesión
+                </button>
+            </div>
         </Drawer>
     </header>
 </template>

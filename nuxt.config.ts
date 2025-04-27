@@ -8,8 +8,14 @@ export default defineNuxtConfig({
     head: {
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'format-detection', content: 'telephone=no' }
+        { name: 'format-detection', content: 'telephone=no' },
+        { name: 'mobile-web-app-capable', content: 'yes' },
+        { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
+        { name: 'apple-mobile-web-app-title', content: 'Andy Loisch' }
       ],
+      link: [
+        { rel: 'apple-touch-icon', href: '/pwa-icons/apple-touch-icon.png' }
+      ]
     }
   },
   supabase: {
@@ -34,6 +40,33 @@ export default defineNuxtConfig({
         persistSession: true,
         detectSessionInUrl: true,
       }
+    }
+  },
+  pwa: {
+    manifest: {
+      name: 'Andy Loisch',
+      short_name: 'AndyLoisch',
+      description: 'Galería de obras de Andy Loisch',
+      theme_color: '#ffffff',
+      background_color: '#ffffff',
+      display: 'standalone',
+      start_url: '/',
+      icons: [
+        {
+          src: 'pwa-icons/icon-192x192.png',
+          sizes: '192x192',
+          type: 'image/png'
+        },
+        {
+          src: 'pwa-icons/icon-512x512.png',
+          sizes: '512x512',
+          type: 'image/png'
+        }
+      ]
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module'
     }
   },
   primevue: {
