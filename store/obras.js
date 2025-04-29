@@ -1,6 +1,42 @@
 import { defineStore } from 'pinia';
 import { imageOptimization } from '~/services/imageOptimization';
 
+const generateSlug = (text) => {
+    if (!text) return '';
+
+    return text
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w\-]+/g, '')
+        .replace(/\-\-+/g, '-')
+        .replace(/^-+/, '')
+        .replace(/-+$/, '');
+};
+
+const ensureUniqueSlug = (baseSlug, obras, currentId = null) => {
+    if (!baseSlug) {
+        return `obra-${Date.now().toString(36)}`;
+    }
+
+    let exists = obras.some(obra => obra.slug === baseSlug && obra.id !== currentId);
+
+    if (!exists) return baseSlug;
+
+    let counter = 1;
+    let newSlug = `${baseSlug}-${counter}`;
+
+    while (obras.some(obra => obra.slug === newSlug && obra.id !== currentId)) {
+        counter++;
+        newSlug = `${baseSlug}-${counter}`;
+    }
+
+    return newSlug;
+};
+
 export const useObrasStore = defineStore('obras', {
     state: () => ({
         obras: [],
@@ -11,7 +47,8 @@ export const useObrasStore = defineStore('obras', {
 
     getters: {
         getObras: (state) => state.obras,
-        getObraById: (state) => (id) => state.obras.find(obra => obra.id === id)
+        getObraById: (state) => (id) => state.obras.find(obra => obra.id === id),
+        getObraBySlug: (state) => (slug) => state.obras.find(obra => obra.slug === slug)
     },
 
     actions: {
@@ -97,11 +134,54 @@ export const useObrasStore = defineStore('obras', {
             }
         },
 
+        async fetchObraBySlug(slug) {
+            this.isLoading = true;
+            this.error = null;
+
+            try {
+                const { data, error } = await useSupabaseClient()
+                    .from('obras')
+                    .select(`
+                        *,
+                        categorias(id, nombre),
+                        obras_imagenes(id, url, posicion, es_principal)
+                    `)
+                    .eq('slug', slug)
+                    .single();
+
+                if (error) throw error;
+
+                const imagenes = data.obras_imagenes ? data.obras_imagenes.map(img => img.url) : [];
+
+                const imagenPrincipal = data.obras_imagenes ?
+                    data.obras_imagenes.find(img => img.es_principal)?.url : null;
+
+                const processedData = {
+                    ...data,
+                    imagenes,
+                    imagen_url: imagenPrincipal || (imagenes.length > 0 ? imagenes[0] : null),
+                    categoria: data.categorias ? data.categorias.nombre : null,
+                    categoria_id: data.categoria_id || (data.categorias ? data.categorias.id : null)
+                };
+
+                return processedData;
+            } catch (error) {
+                console.error(`Error al obtener obra con slug ${slug}:`, error);
+                this.error = error;
+                throw error;
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
         async createObra(obra) {
             this.isLoading = true;
             this.error = null;
 
             try {
+                const baseSlug = generateSlug(obra.titulo);
+                const slug = ensureUniqueSlug(baseSlug, this.obras);
+
                 const obraData = {
                     titulo: obra.titulo,
                     descripcion: obra.descripcion,
@@ -109,7 +189,8 @@ export const useObrasStore = defineStore('obras', {
                     ancho: obra.ancho,
                     alto: obra.alto,
                     categoria_id: obra.categoria_id,
-                    destacado: obra.destacado
+                    destacado: obra.destacado,
+                    slug: slug
                 };
 
                 const { data, error } = await useSupabaseClient()
@@ -192,6 +273,12 @@ export const useObrasStore = defineStore('obras', {
             this.error = null;
 
             try {
+                let slug = updates.slug;
+                if (!slug || updates.titulo !== this.obras.find(o => o.id === id)?.titulo) {
+                    const baseSlug = generateSlug(updates.titulo);
+                    slug = ensureUniqueSlug(baseSlug, this.obras, id);
+                }
+
                 const updateData = {
                     titulo: updates.titulo,
                     descripcion: updates.descripcion,
@@ -199,7 +286,8 @@ export const useObrasStore = defineStore('obras', {
                     ancho: updates.ancho,
                     alto: updates.alto,
                     categoria_id: updates.categoria_id,
-                    destacado: updates.destacado
+                    destacado: updates.destacado,
+                    slug: slug
                 };
 
                 const { data, error } = await useSupabaseClient()
