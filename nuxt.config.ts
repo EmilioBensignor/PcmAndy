@@ -64,6 +64,11 @@ export default defineNuxtConfig({
         }
       ]
     },
+    workbox: {
+      globDirectory: '.output/public',
+      globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,svg,woff,woff2}'],
+      navigateFallback: '/',
+    },
     devOptions: {
       enabled: true,
       type: 'module'
