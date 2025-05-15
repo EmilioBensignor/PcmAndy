@@ -1,11 +1,11 @@
 <template>
-    <header class="flex flex-col justify-center items-center relative bg-primary py-6 px-5 lg:py-8 lg:px-24">
+    <header class="flex flex-col justify-center items-center relative bg-primary py-6 px-5 lg:px-24">
         <button class="flex flex-col justify-center items-center absolute left-5 lg:left-24" @click="toggleDrawer"
             aria-label="Open or close menu">
             <Icon size="1.5rem" name="tabler:menu-2" class="text-black" />
         </button>
         <NuxtLink :to="routes.HOME">
-            <NuxtImg src="/images/Logo-Peripeteia-Blanco.svg" alt="Logo Andy Loisch" class="h-8 lg:h-11" />
+            <NuxtImg src="/images/Logo-Andy-Loisch.svg" alt="Logo Andy Loisch" class="h-10 lg:h-12" />
         </NuxtLink>
         <Drawer :visible="drawerMenu" :modal="true" :dismissable="true" :closeOnEscape="true" @hide="closeDrawer">
             <template #header>
