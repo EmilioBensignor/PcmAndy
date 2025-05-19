@@ -130,7 +130,6 @@ export const useObraService = () => {
             ancho: parseFloat(formData.ancho),
             alto: parseFloat(formData.alto),
             categoria_id: formData.categoria_id,
-            destacado: formData.destacado
         };
     };
 

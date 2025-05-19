@@ -189,7 +189,6 @@ export const useObrasStore = defineStore('obras', {
                     ancho: obra.ancho,
                     alto: obra.alto,
                     categoria_id: obra.categoria_id,
-                    destacado: obra.destacado,
                     slug: slug
                 };
 
@@ -286,7 +285,6 @@ export const useObrasStore = defineStore('obras', {
                     ancho: updates.ancho,
                     alto: updates.alto,
                     categoria_id: updates.categoria_id,
-                    destacado: updates.destacado,
                     slug: slug
                 };
 

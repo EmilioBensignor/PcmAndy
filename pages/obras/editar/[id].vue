@@ -34,7 +34,6 @@ onMounted(async () => {
             alto: obra.alto || '',
             categoria_id: obra.categoria_id || null,
             categorias: obra.categorias || null,
-            destacado: obra.destacado || false,
             imagenes: obra.imagenes || [],
             imagen_url: obra.imagen_url || null
         };

@@ -30,7 +30,7 @@
         </FormFieldsContainer>
 
         <FormFieldsContainer>
-            <div class="w-full flex flex-col gap-2">
+            <div class="w-full lg:w-1/2 flex flex-col gap-2">
                 <p class="font-light lg:text-xl">Categoría*</p>
                 <Select id="categoria" v-model="form.categoria" :options="categorias" optionLabel="nombre"
                     optionValue="id" placeholder="Seleccione una categoría" class="w-full"
@@ -39,8 +39,6 @@
                     {{ errors.categoria }}
                 </DefaultError>
             </div>
-            <FormSwitch id="destacado" label="Destacado" v-model="form.destacado" data-on="Activado"
-                data-off="Desactivado" />
         </FormFieldsContainer>
 
         <div class="w-full flex flex-col sm:flex-row justify-center items-center gap-4 lg:gap-5">
@@ -110,7 +108,6 @@ const form = reactive({
     ancho: props.initialData?.ancho ? props.initialData.ancho.toString() : '',
     alto: props.initialData?.alto ? props.initialData.alto.toString() : '',
     categoria: props.initialData?.categoria_id || null,
-    destacado: props.initialData?.destacado || false,
     imagenes: []
 });
 
@@ -171,7 +168,6 @@ const handleSubmit = () => {
         alto: parseFloat(form.alto),
         categoria_id: form.categoria,
         categoria: form.categoria ? categorias.value.find(c => c.id === form.categoria)?.nombre : null,
-        destacado: form.destacado,
         imagenes: form.imagenes,
         imagen_destacada_index: imagenDestacadaIndex.value,
         existingImages: existingImages.value

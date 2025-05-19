@@ -1,8 +1,5 @@
 <template>
     <div v-if="obra" class="w-full max-w-[354px] flex flex-col justify-between relative bg-black shadow-lg rounded-[20px]">
-        <div v-if="obra.destacado" class="absolute right-0 bg-terciary py-2 px-4 rounded-tr-[20px] rounded-bl-[20px]">
-            <p class="text-white text-sm font-light">Destacada</p>
-        </div>
         <div class="flex flex-col gap-3 p-5">
             <p class="text-white font-light lg:text-xl">{{ obra.titulo }}</p>
             <div class="flex gap-3">
