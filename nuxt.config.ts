@@ -43,6 +43,29 @@ export default defineNuxtConfig({
     }
   },
   pwa: {
+    registerType: 'autoUpdate',
+    workbox: {
+      globDirectory: '.output/public',
+      globPatterns: ['**/*.{js,css,html}'],
+      runtimeCaching: [
+        {
+          urlPattern: ({ request }) => request.destination === 'image',
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'images-cache',
+            expiration: {
+              maxEntries: 200,
+              maxAgeSeconds: 60 * 60 * 24 * 7
+            }
+          }
+        }
+      ],
+      navigateFallback: '/',
+      cleanupOutdatedCaches: true,
+      mode: 'production',
+      clientsClaim: true,
+      skipWaiting: true
+    },
     manifest: {
       name: 'Andy Loisch',
       short_name: 'AndyLoisch',
@@ -53,25 +76,21 @@ export default defineNuxtConfig({
       start_url: '/',
       icons: [
         {
-          src: 'pwa-icons/icon-192x192.png',
+          src: '/pwa-icons/icon-192x192.png',
           sizes: '192x192',
           type: 'image/png'
         },
         {
-          src: 'pwa-icons/icon-512x512.png',
+          src: '/pwa-icons/icon-512x512.png',
           sizes: '512x512',
           type: 'image/png'
         }
       ]
     },
-    workbox: {
-      globDirectory: '.output/public',
-      globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,svg,woff,woff2}'],
-      navigateFallback: '/',
-    },
     devOptions: {
-      enabled: true,
-      type: 'module'
+      enabled: false,
+      type: 'module',
+      suppressWarnings: true
     }
   },
   primevue: {
