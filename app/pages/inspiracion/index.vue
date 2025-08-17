@@ -87,10 +87,15 @@ const colorSeleccionado = ref(null);
 onMounted(async () => {
     isLoading.value = true;
     try {
-        await inspiracionesStore.fetchInspiraciones();
+        const promises = [
+            inspiracionesStore.fetchInspiraciones()
+        ];
+        
         if (coloresStore.colores.length === 0) {
-            await coloresStore.fetchColores();
+            promises.push(coloresStore.fetchColores());
         }
+        
+        await Promise.all(promises);
     } catch (error) {
         $toast.error('No se pudieron cargar las inspiraciones');
     } finally {

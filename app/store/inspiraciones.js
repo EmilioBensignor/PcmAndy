@@ -4,8 +4,7 @@ export const useInspiracionesStore = defineStore('inspiraciones', {
     state: () => ({
         inspiraciones: [],
         isLoading: false,
-        error: null,
-        subscription: null
+        error: null
     }),
 
     getters: {
@@ -213,39 +212,5 @@ export const useInspiracionesStore = defineStore('inspiraciones', {
             }
         },
 
-        setupRealtimeUpdates() {
-            if (this.subscription) {
-                this.subscription.unsubscribe();
-            }
-
-            const supabase = useSupabaseClient();
-
-            this.subscription = supabase
-                .channel('inspiraciones-changes')
-                .on('postgres_changes', {
-                    event: '*',
-                    schema: 'public',
-                    table: 'inspiraciones'
-                }, (payload) => {
-                    if (payload.eventType === 'INSERT') {
-                        this.inspiraciones.unshift(payload.new);
-                    } else if (payload.eventType === 'UPDATE') {
-                        const index = this.inspiraciones.findIndex(inspiracion => inspiracion.id === payload.new.id);
-                        if (index !== -1) {
-                            this.inspiraciones[index] = payload.new;
-                        }
-                    } else if (payload.eventType === 'DELETE') {
-                        this.inspiraciones = this.inspiraciones.filter(inspiracion => inspiracion.id !== payload.old.id);
-                    }
-                })
-                .subscribe();
-
-            return () => {
-                if (this.subscription) {
-                    this.subscription.unsubscribe();
-                    this.subscription = null;
-                }
-            };
-        }
     }
 });
