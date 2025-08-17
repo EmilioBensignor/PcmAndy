@@ -4,8 +4,7 @@ export const useColoresStore = defineStore('colores', {
     state: () => ({
         colores: [],
         isLoading: false,
-        error: null,
-        subscription: null
+        error: null
     }),
 
     getters: {
@@ -215,44 +214,5 @@ export const useColoresStore = defineStore('colores', {
             }
         },
 
-        setupRealtimeUpdates() {
-            if (this.subscription) {
-                this.subscription.unsubscribe();
-            }
-
-            const supabase = useSupabaseClient();
-
-            this.subscription = supabase
-                .channel('colores-changes')
-                .on('postgres_changes', {
-                    event: '*',
-                    schema: 'public',
-                    table: 'colores'
-                }, (payload) => {
-                    if (payload.eventType === 'INSERT') {
-                        this.colores = [...this.colores, payload.new].sort((a, b) =>
-                            a.posicion - b.posicion
-                        );
-                    } else if (payload.eventType === 'UPDATE') {
-                        const index = this.colores.findIndex(color => color.id === payload.new.id);
-                        if (index !== -1) {
-                            this.colores[index] = payload.new;
-                            this.colores = [...this.colores].sort((a, b) =>
-                                a.posicion - b.posicion
-                            );
-                        }
-                    } else if (payload.eventType === 'DELETE') {
-                        this.colores = this.colores.filter(color => color.id !== payload.old.id);
-                    }
-                })
-                .subscribe();
-
-            return () => {
-                if (this.subscription) {
-                    this.subscription.unsubscribe();
-                    this.subscription = null;
-                }
-            };
-        }
     }
 });

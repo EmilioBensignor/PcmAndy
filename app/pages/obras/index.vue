@@ -100,10 +100,15 @@ const categoriasWithAll = computed(() => [
 onMounted(async () => {
     isLoading.value = true;
     try {
-        await Promise.all([
-            obrasStore.fetchObras(),
-            categoriasStore.fetchCategorias()
-        ]);
+        const promises = [
+            obrasStore.fetchObras()
+        ];
+        
+        if (categoriasStore.categorias.length === 0) {
+            promises.push(categoriasStore.fetchCategorias());
+        }
+        
+        await Promise.all(promises);
     } catch (error) {
         $toast.error('No se pudieron cargar los datos');
     } finally {
@@ -112,10 +117,8 @@ onMounted(async () => {
 });
 
 const filteredObras = computed(() => {
-    // Empezamos con todas las obras
     let result = obrasStore.getObras;
 
-    // Aplicar filtro por término de búsqueda si existe
     if (searchTerm.value) {
         const term = searchTerm.value.toLowerCase();
         result = result.filter(obra =>
@@ -125,23 +128,18 @@ const filteredObras = computed(() => {
         );
     }
 
-    // Aplicar filtro por categoría si está seleccionada
     if (selectedCategory.value) {
         result = result.filter(obra => obra.categoria_id === selectedCategory.value);
     }
 
-    // Aplicar el ordenamiento según la opción seleccionada
     if (sortOption.value) {
         switch (sortOption.value) {
             case 'recent':
-                // Por defecto ya están ordenados por más recientes primero
                 break;
             case 'oldest':
-                // Invertimos el orden actual (suponiendo que por defecto es más reciente primero)
                 result = [...result].reverse();
                 break;
             case 'year':
-                // Ordenar por año (de más reciente a más antiguo)
                 result = [...result].sort((a, b) => {
                     const yearA = a.anio ? parseInt(a.anio) : 0;
                     const yearB = b.anio ? parseInt(b.anio) : 0;

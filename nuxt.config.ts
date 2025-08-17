@@ -3,7 +3,15 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
-  modules: ['@nuxt/image', '@nuxt/icon', '@pinia/nuxt', '@nuxt/fonts', '@nuxtjs/supabase', '@primevue/nuxt-module', '@nuxtjs/tailwindcss', '@vite-pwa/nuxt'],
+  modules: [
+    '@nuxt/image',
+    '@nuxt/icon',
+    '@pinia/nuxt',
+    '@nuxt/fonts',
+    '@nuxtjs/supabase',
+    '@nuxtjs/tailwindcss',
+    '@vite-pwa/nuxt'
+  ],
   app: {
     head: {
       meta: [
@@ -93,25 +101,11 @@ export default defineNuxtConfig({
       suppressWarnings: true
     }
   },
-  primevue: {
-    components: {
-      include: [
-        'Toast', 'Button', 'Dialog', 'InputText', 'Password', 'ProgressSpinner', 'Drawer', 'FileUpload', 'Dropdown', 'InputSwitch', 'InputNumber', 'Textarea'
-      ]
-    },
-    options: {
-      ripple: false,
-      unstyled: false
-    }
-  },
   fonts: {
     defaults: {
       weights: [300, 400, 500, 700, 900],
     }
   },
-  plugins: [
-    { src: '~/plugins/preload-data.js', mode: 'client' }
-  ],
   icon: {
     size: '1rem',
     class: 'tablerIcon',
@@ -121,7 +115,7 @@ export default defineNuxtConfig({
   },
   vite: {
     optimizeDeps: {
-      include: ['primeflex', 'pinia']
+      include: ['pinia']
     },
     build: {
       cssCodeSplit: true,

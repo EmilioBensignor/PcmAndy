@@ -163,6 +163,10 @@ input::placeholder {
     border: none !important;
 }
 
+.p-fileupload-basic-content {
+    gap: 0.5rem !important;
+}
+
 .p-fileupload-header .p-button,
 .p-fileupload-basic .p-button {
     width: max-content !important;
